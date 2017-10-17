@@ -1,0 +1,72 @@
+{
+  "$ref": "#/definitions/descriptor",
+  "definitions": {
+    "usage": {
+      "type": "string"
+    },
+    "variation": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "options": { "$ref": "#/definitions/options" },
+        "render": { "type": "function" }
+      },
+      "required": ["title", "render"],
+      "additionalProperties": false
+    },
+    "variations": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/variation" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "consumerOptionsObject": {
+      "allOf": [
+        { "$ref": "#/definitions/defaultConsumerOptions" },
+        {
+          "type": "object",
+          "properties": {
+          },
+          "minProperties": 0
+        }
+      ]
+    },
+    "consumerOptions": {
+      "oneOf": [
+        { "$ref": "#/definitions/consumerOptionsObject" },
+        { "type": "boolean", "const": false }
+      ]
+    },
+    "defaultConsumerOptions": {
+      "type": "object",
+      "properties": {
+        "disabled": { "type": "boolean" }
+      }
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "default": { "$ref": "#/definitions/defaultConsumerOptions" }
+      },
+      "patternProperties": {
+        "^[a-zA-Z_]$": { "$ref": "#/definitions/consumerOptions" }
+      },
+      "minProperties": 1
+    },
+    "descriptor": {
+      "type": "object",
+      "properties": {
+        "component": { "type": "function" },
+        "usage": { "$ref": "#/definitions/usage" },
+        "createdAt": { "type": "time-date" },
+        "variations": { "$ref": "#/definitions/variations" },
+        "options": { "$ref": "#/definitions/options" }
+      },
+      "required": ["component", "variations"],
+      "additionalProperties": false
+    }
+  }
+}
