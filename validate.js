@@ -57,9 +57,12 @@ function validateDescriptorProvider(file, provider) {
 
   const descriptor = provider(Components, Extras);
 
-  if (!(descriptor.component instanceof ComponentMock)) {
-    throw new TypeError('descriptor must have a "component" property, with a value destructured from the first provider argument');
-  }
+  const components = Array.isArray(descriptor.component) ? descriptor.component : [descriptor.component];
+  descriptor.component.forEach((component) => {
+    if (!(component instanceof ComponentMock)) {
+      throw new TypeError('descriptor must have a "component" property, with a value destructured from the first provider argument (or an array of them)');
+    }
+  });
 
   const { errors } = validate(descriptor, schema);
   if (errors.length > 0) {
