@@ -10,7 +10,7 @@ const paths = glob.sync(process.argv[2]);
 
 function getProxy(mock) {
   const properties = [];
-  return new Proxy({}, {
+  return new Proxy(this || {}, {
     get(target, property, receiver) {
       properties.push(property);
       return mock(property);
@@ -21,11 +21,17 @@ function getProxy(mock) {
   });
 }
 
+function getStaticProperty(p) {
+  if (p !== 'getDefaultProps') { // avoid a React warning
+    return () => p;
+  }
+}
+
 function ComponentMock(name) {
   const C = () => null;
   C.displayName = name;
   Object.setPrototypeOf(C, ComponentMock.prototype);
-  return C;
+  return getProxy.call(C, getStaticProperty);
 }
 function ExtraMock() {
 }
