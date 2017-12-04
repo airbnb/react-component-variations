@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "react-component-variations": "./validate.js"
+    "react-component-variations": "./bin.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,8 +13,10 @@
   "license": "MIT",
   "dependencies": {
     "babel-register": "^6.26.0",
+    "chalk": "^2.3.0",
     "glob": "^7.1.2",
-    "jsonschema": "^1.2.0"
+    "jsonschema": "^1.2.0",
+    "yargs": "^10.0.3"
   },
   "devDependencies": {}
 }

@@ -1,12 +1,10 @@
-#!/usr/bin/env node
 'use strict'
 
 const glob = require('glob');
+const chalk = require('chalk');
 const path = require('path');
 const validate = require('jsonschema').validate;
-const schema = require('./schema.json');
-
-const paths = glob.sync(process.argv[2]);
+const schema = require('../schema.json');
 
 function getProxy(mock) {
   const properties = [];
@@ -80,22 +78,33 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-require('babel-register');
+exports.command = 'validate <globPath>';
+exports.desc = 'validate Variation Providers';
+exports.builder = (yargs) => {
+  yargs.positional('globPath', {
+    describe: 'glob path to Variation Providers',
+    type: 'string',
+  });
+};
+exports.handler = (argv) => {
+  require('babel-register');
+  const paths = glob.sync(argv.globPath);
 
+  const errors = paths.map(x => {
+    const file = path.normalize(x);
+    try {
+      console.error = function (msg) { throw new Error(msg); };
+      const module = require(path.join(process.cwd(), x));
+      validateDescriptorProvider(file, module.default || module);
+      return null;
+    } catch (e) {
+      return formatMsg(file, e.message.split('\n')[0]);
+    }
+  }).filter(Boolean);
 
-const errors = paths.map(x => {
-  const file = path.normalize(x);
-  try {
-    console.error = function (msg) { throw new Error(msg); };
-    const module = require(path.join(process.cwd(), x));
-    validateDescriptorProvider(file, module.default || module);
-    return null;
-  } catch (e) {
-    return formatMsg(file, e.message.split('\n')[0]);
+  if (errors.length > 0) {
+    errors.forEach((error) => { console.warn(error); });
+    process.exit(errors.length);
   }
-}).filter(Boolean);
-
-if (errors.length > 0) {
-  errors.forEach((error) => { console.warn(error); });
-  process.exit(errors.length);
+  console.log(chalk.green(chalk.bold('Success!') + ' All Variation Providers appear to be valid.'));
 }
