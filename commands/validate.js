@@ -11,7 +11,7 @@ function getProxy(mock) {
   return new Proxy(this || {}, {
     get(target, property, receiver) {
       properties.push(property);
-      return mock(property);
+      return mock.call(target, property);
     },
     ownKeys(target) {
       return properties;
@@ -20,6 +20,7 @@ function getProxy(mock) {
 }
 
 function getStaticProperty(p) {
+  if (this && p in this) { return Reflect.get(this, p); }
   if (p !== 'getDefaultProps') { // avoid a React warning
     return () => p;
   }
