@@ -79,23 +79,30 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-exports.command = 'validate <globPath>';
+exports.command = 'validate [paths]';
 exports.desc = 'validate Variation Providers';
 exports.builder = (yargs) => {
-  yargs.positional('globPath', {
-    describe: 'glob path to Variation Providers',
+  yargs.config();
+  yargs.pkgConf('react-component-variations');
+  yargs.demandOption('paths'); // this must come after config/pkgConf, so it can be supplied that way.
+  yargs.positional('paths', {
     type: 'string',
+    describe: 'glob path to Variation Providers',
+    coerce(arg) {
+      return glob.sync(arg).map(x => path.normalize(x));
+    }
   });
 };
 exports.handler = (argv) => {
+  if (argv.paths.length === 0) {
+    console.error('No variations provided.');
+    process.exit(1);
+  }
   require('babel-register');
-  const paths = glob.sync(argv.globPath);
-
-  const errors = paths.map(x => {
-    const file = path.normalize(x);
+  const errors = argv.paths.map(file => {
+    console.error = function (msg) { throw new Error(msg); };
     try {
-      console.error = function (msg) { throw new Error(msg); };
-      const module = require(path.join(process.cwd(), x));
+      const module = require(path.join(process.cwd(), file));
       validateDescriptorProvider(file, module.default || module);
       return null;
     } catch (e) {
