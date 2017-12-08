@@ -1,19 +1,19 @@
-'use strict'
+'use strict';
 
 const glob = require('glob');
 const chalk = require('chalk');
 const path = require('path');
-const validate = require('jsonschema').validate;
+const { validate } = require('jsonschema');
 const schema = require('../schema.json');
 
 function getProxy(mock) {
   const properties = [];
   return new Proxy(this || {}, {
-    get(target, property, receiver) {
+    get(target, property) {
       properties.push(property);
       return mock.call(target, property);
     },
-    ownKeys(target) {
+    ownKeys() {
       return properties;
     },
   });
@@ -24,6 +24,7 @@ function getStaticProperty(p) {
   if (p !== 'getDefaultProps') { // avoid a React warning
     return () => p;
   }
+  return undefined;
 }
 
 function ComponentMock(name) {
@@ -32,10 +33,12 @@ function ComponentMock(name) {
   Object.setPrototypeOf(C, ComponentMock.prototype);
   return getProxy.call(C, getStaticProperty);
 }
-function ExtraMock() {
+function ExtraMock(extra, property) {
+  this.extra = extra;
+  this.property = property;
 }
 function ExtrasMock(extra) {
-  return getProxy(property => new ExtraMock(property));
+  return getProxy(property => new ExtraMock(extra, property));
 }
 
 function formatMsg(file, msg) {
@@ -56,8 +59,10 @@ function validateDescriptorProvider(file, provider) {
 
   const descriptor = provider(Components, Extras);
 
-  const components = Array.isArray(descriptor.component) ? descriptor.component : [descriptor.component];
-  descriptor.component.forEach((component) => {
+  const components = Array.isArray(descriptor.component)
+    ? descriptor.component
+    : [descriptor.component];
+  components.forEach((component) => {
     if (!(component instanceof ComponentMock)) {
       throw new TypeError('descriptor must have a "component" property, with a value destructured from the first provider argument (or an array of them)');
     }
@@ -90,7 +95,7 @@ exports.builder = (yargs) => {
     describe: 'glob path to Variation Providers',
     coerce(arg) {
       return glob.sync(arg).map(x => path.normalize(x));
-    }
+    },
   });
 };
 exports.handler = (argv) => {
@@ -98,10 +103,11 @@ exports.handler = (argv) => {
     console.error('No variations provided.');
     process.exit(1);
   }
-  require('babel-register');
-  const errors = argv.paths.map(file => {
+  require('babel-register'); // eslint-disable-line global-require
+  const errors = argv.paths.map((file) => {
     console.error = function (msg) { throw new Error(msg); };
     try {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
       const module = require(path.join(process.cwd(), file));
       validateDescriptorProvider(file, module.default || module);
       return null;
@@ -114,5 +120,5 @@ exports.handler = (argv) => {
     errors.forEach((error) => { console.warn(error); });
     process.exit(errors.length);
   }
-  console.log(chalk.green(chalk.bold('Success!') + ' All Variation Providers appear to be valid.'));
-}
+  console.log(chalk.green(`${chalk.bold('Success!')} All Variation Providers appear to be valid.`));
+};

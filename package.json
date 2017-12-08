@@ -7,6 +7,8 @@
     "react-component-variations": "./bin.js"
   },
   "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jordan Harband <ljharb@gmail.com>",
@@ -18,5 +20,9 @@
     "jsonschema": "^1.2.0",
     "yargs": "^10.0.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^4.13.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
 }

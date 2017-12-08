@@ -33,8 +33,9 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     // this consumer is disabled
     if (!variationOptions || variationOptions.disabled) { return; }
 
-    const componentName = Array.isArray(component) ? component.map(x => getComponentName(x)) : getComponentName(component);
-
+    const componentName = Array.isArray(component)
+      ? component.map(x => getComponentName(x))
+      : getComponentName(component);
 
     const options = Object.assign({}, rootOptions, variationOptions);
     const createdAt = variationCreatedAt || rootCreatedAt;
@@ -50,7 +51,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       },
       createdAt && { createdAt },
       variation,
-      { options },
+      { options, render },
     );
     callback(newVariation);
   });
