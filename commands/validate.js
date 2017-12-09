@@ -103,7 +103,6 @@ exports.handler = (argv) => {
     console.error('No variations provided.');
     process.exit(1);
   }
-  require('babel-register'); // eslint-disable-line global-require
   const errors = argv.paths.map((file) => {
     console.error = function (msg) { throw new Error(msg); };
     try {
