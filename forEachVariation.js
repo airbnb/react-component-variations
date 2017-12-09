@@ -51,7 +51,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       },
       createdAt && { createdAt },
       variation,
-      { options, render },
+      { options, render }
     );
     callback(newVariation);
   });
