@@ -47,7 +47,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
         component,
         usage,
         options,
-        rootOptions,
+        rootOptions: rootOptions || {},
       },
       createdAt && { createdAt },
       variation,
