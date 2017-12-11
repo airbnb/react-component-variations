@@ -12,7 +12,8 @@
           "minLength": 1
         },
         "options": { "$ref": "#/definitions/options" },
-        "render": { "type": "function" }
+        "render": { "type": "function" },
+        "noVisualSignificance": { "type": "boolean" }
       },
       "required": ["title", "render"],
       "additionalProperties": false
@@ -62,6 +63,7 @@
         "component": { "type": "function" },
         "usage": { "$ref": "#/definitions/usage" },
         "createdAt": { "type": "time-date" },
+        "noVisualSignificance": { "type": "boolean" },
         "variations": { "$ref": "#/definitions/variations" },
         "options": { "$ref": "#/definitions/options" }
       },
