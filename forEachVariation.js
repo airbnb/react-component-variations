@@ -1,5 +1,7 @@
 'use strict';
 
+const entries = require('object.entries');
+
 const getComponentName = function getComponentName(C) {
   if (typeof C === 'string') {
     return C;
@@ -15,20 +17,26 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     component,
     createdAt: rootCreatedAt,
     usage,
-    options: { [consumer]: rootOptions = {} } = {},
+    options: allRootConsumerOptions = {},
     variations,
   } = descriptor;
+  const { [consumer]: rootConsumerOptions = {} } = allRootConsumerOptions || {};
 
   // this consumer is disabled
-  if (!rootOptions || rootOptions.disabled) { return; }
+  if (!rootConsumerOptions || rootConsumerOptions.disabled) { return; }
+
+  const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumer, opts]) => {
+    return Object.assign({}, acc, { [consumer]: opts || (opts === false ? { disabled: true } : {}) });
+  }, {});
 
   variations.forEach((variation) => {
     const {
       title,
       createdAt: variationCreatedAt,
-      options: { [consumer]: variationOptions = {} } = {},
+      options: allVariationConsumerOptions,
       render,
     } = variation;
+    const { [consumer]: variationOptions = {} } = allVariationConsumerOptions || {};
 
     // this consumer is disabled
     if (!variationOptions || variationOptions.disabled) { return; }
@@ -37,7 +45,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       ? component.map(x => getComponentName(x))
       : getComponentName(component);
 
-    const options = Object.assign({}, rootOptions, variationOptions);
+    const options = Object.assign({}, rootConsumerOptions, variationOptions);
     const createdAt = variationCreatedAt || rootCreatedAt;
 
     const newVariation = Object.assign(
@@ -47,7 +55,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
         component,
         usage,
         options,
-        rootOptions: rootOptions || {},
+        rootOptions,
       },
       createdAt && { createdAt },
       variation,
