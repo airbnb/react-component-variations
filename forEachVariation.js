@@ -17,6 +17,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     component,
     createdAt: rootCreatedAt,
     usage,
+    noVisualSignificance: rootNoVisualSignificance,
     options: allRootConsumerOptions = {},
     variations,
   } = descriptor;
@@ -33,6 +34,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     const {
       title,
       createdAt: variationCreatedAt,
+      noVisualSignificance: variationNoVisualSignificance,
       options: allVariationConsumerOptions,
       render,
     } = variation;
@@ -48,6 +50,10 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     const options = Object.assign({}, rootConsumerOptions, variationOptions);
     const createdAt = variationCreatedAt || rootCreatedAt;
 
+    const noVisualSignificance = typeof variationNoVisualSignificance === 'boolean'
+      ? variationNoVisualSignificance
+      : rootNoVisualSignificance;
+
     const newVariation = Object.assign(
       {
         componentName,
@@ -58,6 +64,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
         rootOptions,
       },
       createdAt && { createdAt },
+      typeof noVisualSignificance === 'boolean' && { noVisualSignificance },
       variation,
       { options, render }
     );
