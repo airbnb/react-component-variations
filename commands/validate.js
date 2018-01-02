@@ -36,6 +36,7 @@ function ComponentMock(name) {
 function ExtraMock(extra, property) {
   this.extra = extra;
   this.property = property;
+  return getProxy.call(this, getStaticProperty);
 }
 function ExtrasMock(extra) {
   return getProxy(property => new ExtraMock(extra, property));
