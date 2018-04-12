@@ -4,6 +4,7 @@ const glob = require('glob');
 const chalk = require('chalk');
 const path = require('path');
 const { validate } = require('jsonschema');
+const flatten = require('array.prototype.flatten');
 const schema = require('../schema.json');
 
 function getProxy(mock) {
@@ -85,17 +86,17 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-exports.command = 'validate [paths]';
+exports.command = 'validate [paths..]';
 exports.desc = 'validate Variation Providers';
 exports.builder = (yargs) => {
   yargs.config();
   yargs.pkgConf('react-component-variations');
   yargs.demandOption('paths'); // this must come after config/pkgConf, so it can be supplied that way.
   yargs.positional('paths', {
-    type: 'string',
+    type: 'array',
     describe: 'glob path to Variation Providers',
     coerce(arg) {
-      return glob.sync(arg).map(x => path.normalize(x));
+      return flatten(arg.map(p => glob.sync(p).map(x => path.normalize(x))));
     },
   });
 };
