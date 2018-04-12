@@ -26,9 +26,9 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
   // this consumer is disabled
   if (!rootConsumerOptions || rootConsumerOptions.disabled) { return; }
 
-  const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumer, opts]) => {
-    return Object.assign({}, acc, { [consumer]: opts || (opts === false ? { disabled: true } : {}) });
-  }, {});
+  const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumerName, opts]) => (
+    Object.assign({}, acc, { [consumerName]: opts || (opts === false ? { disabled: true } : {}) })
+  ), {});
 
   variations.forEach((variation) => {
     const {

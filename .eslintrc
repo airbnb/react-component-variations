@@ -4,4 +4,7 @@
   "parserOptions": {
     "sourceType": "script",
   },
+  "rules": {
+    "max-len": 0,
+  },
 }
