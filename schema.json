@@ -57,6 +57,10 @@
       },
       "minProperties": 1
     },
+    "metadata": {
+      "type": "object",
+      "minProperties": 1
+    },
     "descriptor": {
       "type": "object",
       "properties": {

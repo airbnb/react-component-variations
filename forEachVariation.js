@@ -19,6 +19,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     usage,
     noVisualSignificance: rootNoVisualSignificance,
     options: allRootConsumerOptions = {},
+    metadata = {},
     variations,
   } = descriptor;
   const { [consumer]: rootConsumerOptions = {} } = allRootConsumerOptions || {};
@@ -66,7 +67,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       createdAt && { createdAt },
       typeof noVisualSignificance === 'boolean' && { noVisualSignificance },
       variation,
-      { options, render }
+      { options, metadata, render }
     );
     callback(newVariation);
   });
