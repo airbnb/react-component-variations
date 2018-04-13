@@ -69,7 +69,8 @@
         "createdAt": { "type": "time-date" },
         "noVisualSignificance": { "type": "boolean" },
         "variations": { "$ref": "#/definitions/variations" },
-        "options": { "$ref": "#/definitions/options" }
+        "options": { "$ref": "#/definitions/options" },
+        "metadata": { "$ref": "#/definitions/metadata" }
       },
       "required": ["component", "variations"],
       "additionalProperties": false
