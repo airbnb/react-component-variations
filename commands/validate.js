@@ -72,7 +72,7 @@ function validateDescriptorProvider(file, provider) {
 
   const { errors } = validate(descriptor, schema);
   if (errors.length > 0) {
-    throw new SyntaxError(`received invalid descriptor object:\n${errors.join('\n  ')}`);
+    throw new SyntaxError(`received invalid descriptor object:\n   - ${errors.join('\n   - ')}`);
   }
 
   descriptor.variations.forEach((variation, i) => {
@@ -113,7 +113,7 @@ exports.handler = (argv) => {
       validateDescriptorProvider(file, module.default || module);
       return null;
     } catch (e) {
-      return formatMsg(file, e.message.split('\n')[0]);
+      return formatMsg(file, e.message);
     }
   }).filter(Boolean);
 
