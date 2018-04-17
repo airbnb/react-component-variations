@@ -56,7 +56,7 @@ function validateDescriptorProvider(file, provider) {
     throw new RangeError(`provider function must take exactly 1 or 2 arguments: takes ${provider.length}`);
   }
 
-  const Components = getProxy(name => new ComponentMock(name));
+  const Components = getProxy(name => name.indexOf('/') > -1 ? Components : new ComponentMock(name));
   const Extras = getProxy(extra => new ExtrasMock(extra));
 
   const descriptor = provider(Components, Extras);
