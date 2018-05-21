@@ -67,7 +67,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       createdAt && { createdAt },
       typeof noVisualSignificance === 'boolean' && { noVisualSignificance },
       variation,
-      { options, metadata, render }
+      { options, metadata, render },
     );
     callback(newVariation);
   });

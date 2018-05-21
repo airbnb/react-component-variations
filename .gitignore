@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Ignore top-level built files
+/forEachVariation.js
+
 # Runtime data
 pids
 *.pid
