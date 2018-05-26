@@ -9,8 +9,9 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "babel src -d .",
+    "postbuild": "cp src/*.json ./",
     "build:watch": "npm run build -- --watch",
-    "clean": "rimraf forEachVariation.js",
+    "clean": "rimraf *.js commands schema.json",
     "lint": "eslint --ext=js,jsx src",
     "prepublish": "npm run build",
     "pretest": "npm run lint",

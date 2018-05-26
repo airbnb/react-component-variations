@@ -6,7 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Ignore top-level built files
-/forEachVariation.js
+/*.js
+/*.json
+/commands
 
 # Runtime data
 pids
