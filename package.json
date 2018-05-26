@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "array.prototype.flatten": "^1.2.1",
-    "chalk": "^2.4.0",
+    "chalk": "^2.4.1",
     "glob": "^7.1.2",
     "jsonschema": "^1.2.4",
     "object.assign": "^4.1.0",
