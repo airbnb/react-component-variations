@@ -1,10 +1,9 @@
 'use strict';
 
-const glob = require('glob');
 const chalk = require('chalk');
 const path = require('path');
 const { validate } = require('jsonschema');
-const flatten = require('array.prototype.flatten');
+const has = require('has');
 const schema = require('../schema.json');
 
 function getProxy(mock) {
@@ -56,7 +55,7 @@ function validateDescriptorProvider(file, provider) {
     throw new RangeError(`provider function must take exactly 1 or 2 arguments: takes ${provider.length}`);
   }
 
-  const Components = getProxy(name => name.endsWith('/') ? Components : new ComponentMock(name));
+  const Components = getProxy(name => (name.endsWith('/') ? Components : new ComponentMock(name)));
   const Extras = getProxy(extra => new ExtrasMock(extra));
 
   const descriptor = provider(Components, Extras);
@@ -86,28 +85,28 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-exports.command = 'validate [paths..]';
+exports.command = 'validate [variations]';
 exports.desc = 'validate Variation Providers';
 exports.builder = (yargs) => {
-  yargs.config();
-  yargs.pkgConf('react-component-variations');
-  yargs.demandOption('paths'); // this must come after config/pkgConf, so it can be supplied that way.
-  yargs.positional('paths', {
-    type: 'array',
-    describe: 'glob path to Variation Providers',
-    coerce(arg) {
-      return flatten(arg.map(p => glob.sync(p).map(x => path.normalize(x))));
-    },
-  });
+  yargs.demandOption('variations'); // this must come after config/pkgConf, so it can be supplied that way.
+  yargs.positional('variations', {});
+
+  const { project, projects } = yargs.argv;
+  if (project && !has(projects, project)) {
+    throw chalk.red(`Project "${project}" missing from projects config`);
+  }
+  if (project) {
+    yargs.config(projects[project]);
+  }
 };
 exports.handler = (argv) => {
-  if (argv.paths.length === 0) {
-    console.error('No variations provided.');
+  if (argv.variations.length === 0) {
+    console.error(chalk.red(chalk.bold('No Variation Providers found.')));
     process.exit(1);
   }
-  console.log(chalk.green(`${chalk.bold(argv.paths.length)} Variation Providers found...`));
-  const errors = argv.paths.map((file) => {
-    console.error = function (msg) { throw new Error(msg); };
+  console.log(chalk.green(`${chalk.bold(argv.variations.length)} Variation Providers found...`));
+  const errors = argv.variations.map((file) => {
+    console.error = function throwError(msg) { throw new Error(msg); };
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const module = require(path.join(process.cwd(), file));
