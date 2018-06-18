@@ -9,7 +9,7 @@ require('yargs')
   .demandCommand(1, 'a subcommand is required')
   .option('require', {
     type: 'string',
-    describe: 'Optional path to require, like a shim or custom loader',
+    describe: 'Optional path(s) to require, like a shim or custom loader',
     coerce(arg) {
       [].concat(arg).forEach((path) => {
         // eslint-disable-next-line global-require, import/no-dynamic-require
