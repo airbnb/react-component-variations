@@ -6,7 +6,7 @@ const resolve = require('resolve');
 
 require('yargs')
   .commandDir('./commands')
-  .demandCommand()
+  .demandCommand(1, 'a subcommand is required')
   .option('require', {
     type: 'string',
     describe: 'Optional path to require, like a shim or custom loader',
