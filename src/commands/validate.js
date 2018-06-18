@@ -105,6 +105,7 @@ exports.handler = (argv) => {
     console.error('No variations provided.');
     process.exit(1);
   }
+  console.log(chalk.green(`${chalk.bold(argv.paths.length)} Variation Providers found...`));
   const errors = argv.paths.map((file) => {
     console.error = function (msg) { throw new Error(msg); };
     try {
