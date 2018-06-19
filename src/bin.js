@@ -17,9 +17,15 @@ require('yargs')
     describe: 'project name',
     implies: 'projects',
   })
+  .option('all', {
+    type: 'boolean',
+    describe: 'include all projects',
+    implies: 'projects',
+  })
+  .conflicts('all', 'project')
+  .conflicts('project', 'all')
   .option('projects', {
     describe: 'Object mapping project names to project configs',
-    implies: 'project',
     hidden: true,
   })
   .option('require', {

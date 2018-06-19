@@ -40,10 +40,28 @@ function getOverallErrors(variations = [], components = [], log, warn, error) {
 exports.command = 'validate [variations]';
 exports.desc = 'validate Variation Providers';
 exports.builder = (yargs) => {
-  yargs.demandOption('variations'); // this must come after config/pkgConf, so it can be supplied that way.
+  const { project, projects, all } = yargs.argv;
+  const projectCount = projects ? Object.keys(projects).length : 0;
+
+  if (!all) {
+    // this must come after config/pkgConf, so it can be supplied that way.
+    yargs.option('variations', {
+      demandOption: true,
+      requiresArg: true,
+    });
+    yargs.option('components', {
+      demandOption: true,
+      requiresArg: true,
+    });
+  }
   yargs.positional('variations', {});
 
-  const { project, projects } = yargs.argv;
+  if (all && projectCount <= 0) {
+    throw chalk.red(`\`--all\` requires a non-empty “projects” config`);
+  }
+  if (all && project) {
+    throw chalk.red(`\`--all\` and \`--project\` are mutually exclusive`);
+  }
   if (project && !has(projects, project)) {
     throw chalk.red(`Project "${project}" missing from “projects” config`);
   }
@@ -51,7 +69,29 @@ exports.builder = (yargs) => {
     yargs.config(projects[project]);
   }
 };
-exports.handler = ({ variations, components }) => {
+exports.handler = ({ variations, components, all, projects }) => {
+  if (all) {
+    const exitCodes = Object.entries(projects).map(([
+      project,
+      { variations, components, require: requires },
+    ]) => {
+      if (requires) { requireFiles(requires); }
+      try {
+        return getOverallErrors(
+          globToFiles(variations),
+          globToFiles(components),
+          x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
+          x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
+          x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
+        );
+      } catch (e) {
+        console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${e.message}`);
+        return 1;
+      }
+    });
+    process.exit(Math.max(...exitCodes));
+  }
+
   const exitCode = getOverallErrors(
     variations,
     components,
