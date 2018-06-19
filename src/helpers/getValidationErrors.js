@@ -84,12 +84,14 @@ function validateDescriptorProvider(file, provider) {
 }
 
 module.exports = function getValidationErrors(variations) {
+  const origError = console.error;
   return variations.map((file) => {
     console.error = function throwError(msg) { throw new Error(msg); };
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const module = require(path.join(process.cwd(), file));
       validateDescriptorProvider(file, module.default || module);
+      console.error = origError;
       return null;
     } catch (e) {
       return formatMsg(file, e.message);
