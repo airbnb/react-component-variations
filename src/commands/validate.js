@@ -104,7 +104,20 @@ exports.handler = (argv) => {
     console.error(chalk.red(chalk.bold('No Variation Providers found.')));
     process.exit(1);
   }
+
+  if (argv.components.length === 0) {
+    console.error(chalk.red(chalk.bold('No Components found.')));
+    process.exit(2);
+  }
+
+  console.log(chalk.blue(`${chalk.bold(argv.components.length)} Components found...`));
   console.log(chalk.green(`${chalk.bold(argv.variations.length)} Variation Providers found...`));
+
+  if (argv.components.length < argv.variations.length) {
+    console.error(chalk.red(chalk.bold('Found fewer Components than Variation Providers.')));
+    process.exit(3);
+  }
+
   const errors = argv.variations.map((file) => {
     console.error = function throwError(msg) { throw new Error(msg); };
     try {

@@ -29,6 +29,15 @@ require('yargs')
       });
     },
   })
+  .option('components', {
+    type: 'string',
+    describe: 'glob path to React components',
+    demandOption: true,
+    requiresArg: true,
+    coerce(arg) {
+      return glob.sync(arg).map(x => path.normalize(x));
+    },
+  })
   .option('variations', {
     type: 'string',
     describe: 'glob path to Variation Providers',
