@@ -26,8 +26,8 @@
     "jsonschema": "^1.2.4",
     "object.assign": "^4.1.0",
     "object.entries": "^1.0.4",
-    "resolve": "^1.7.1",
-    "yargs": "^10.0.3"
+    "resolve": "^1.8.1",
+    "yargs": "^10.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
