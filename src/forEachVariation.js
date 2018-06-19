@@ -18,9 +18,10 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
   // this consumer is disabled
   if (!rootConsumerOptions || rootConsumerOptions.disabled) { return; }
 
-  const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumerName, opts]) => (
-    Object.assign({}, acc, { [consumerName]: opts || (opts === false ? { disabled: true } : {}) })
-  ), {});
+  const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumerName, opts]) => ({
+    ...acc,
+    [consumerName]: opts || (opts === false ? { disabled: true } : {}),
+  }), {});
 
   variations.forEach((variation) => {
     const {
@@ -39,27 +40,27 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       ? component.map(x => getComponentName(x))
       : getComponentName(component);
 
-    const options = Object.assign({}, rootConsumerOptions, variationOptions);
+    const options = { ...rootConsumerOptions, ...variationOptions };
     const createdAt = variationCreatedAt || rootCreatedAt;
 
     const noVisualSignificance = typeof variationNoVisualSignificance === 'boolean'
       ? variationNoVisualSignificance
       : rootNoVisualSignificance;
 
-    const newVariation = Object.assign(
-      {
-        componentName,
-        title,
-        component,
-        usage,
-        options,
-        rootOptions,
-      },
-      createdAt && { createdAt },
-      typeof noVisualSignificance === 'boolean' && { noVisualSignificance },
-      variation,
-      { options, metadata, render },
-    );
+    const newVariation = {
+      componentName,
+      title,
+      component,
+      usage,
+      options,
+      rootOptions,
+      ...(createdAt && { createdAt }),
+      ...(typeof noVisualSignificance === 'boolean' && { noVisualSignificance }),
+      ...variation,
+      options,
+      metadata,
+      render,
+    };
     callback(newVariation);
   });
 };
