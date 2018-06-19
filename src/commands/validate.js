@@ -5,8 +5,10 @@ const has = require('has');
 const yargs = require('yargs');
 
 const getValidationErrors = require('../helpers/getValidationErrors');
+const globToFiles = require('../helpers/globToFiles');
+const requireFiles = require('../helpers/requireFiles');
 
-function getOverallErrors(variations, components, log, warn, error) {
+function getOverallErrors(variations = [], components = [], log, warn, error) {
   if (variations.length === 0) {
     error(chalk.red(chalk.bold('No Variation Providers found.')));
     return 1;
