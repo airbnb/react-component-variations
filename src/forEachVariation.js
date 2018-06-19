@@ -1,16 +1,7 @@
 'use strict';
 
 const entries = require('object.entries');
-
-const getComponentName = function getComponentName(C) {
-  if (typeof C === 'string') {
-    return C;
-  }
-  if (typeof C === 'function') {
-    return C.displayName || C.name;
-  }
-  return null;
-};
+const getComponentName = require('airbnb-prop-types/build/helpers/getComponentName');
 
 module.exports = function forEachVariation(descriptor, consumer, callback) {
   const {
