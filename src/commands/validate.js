@@ -2,11 +2,14 @@
 
 const chalk = require('chalk');
 const has = require('has');
-const yargs = require('yargs');
 
 const getValidationErrors = require('../helpers/getValidationErrors');
 const globToFiles = require('../helpers/globToFiles');
 const requireFiles = require('../helpers/requireFiles');
+const forEachProject = require('../traversal/forEachProject');
+const validateProjects = require('../helpers/validateProjects');
+const validateProject = require('../helpers/validateProject');
+const normalizeConfig = require('../helpers/normalizeConfig');
 
 function getOverallErrors(variations = [], components = [], log, warn, error) {
   if (variations.length === 0) {
@@ -40,64 +43,53 @@ function getOverallErrors(variations = [], components = [], log, warn, error) {
 exports.command = 'validate [variations]';
 exports.desc = 'validate Variation Providers';
 exports.builder = (yargs) => {
-  const { project, projects, all } = yargs.argv;
-  const projectCount = projects ? Object.keys(projects).length : 0;
+  const config = normalizeConfig(yargs.argv);
+  const { project, projects, all } = config;
+  const allProjectNames = projects ? Object.keys(projects) : [];
 
-  if (!all) {
-    // this must come after config/pkgConf, so it can be supplied that way.
-    yargs.option('variations', {
-      demandOption: true,
-      requiresArg: true,
-    });
-    yargs.option('components', {
-      demandOption: true,
-      requiresArg: true,
-    });
-  }
-  yargs.positional('variations', {});
-
-  if (all && projectCount <= 0) {
-    throw chalk.red(`\`--all\` requires a non-empty “projects” config`);
+  if (all && allProjectNames.length <= 0) {
+    throw chalk.red('`--all` requires a non-empty “projects” config');
   }
   if (all && project) {
-    throw chalk.red(`\`--all\` and \`--project\` are mutually exclusive`);
+    throw chalk.red('`--all` and `--project` are mutually exclusive');
   }
   if (project && !has(projects, project)) {
     throw chalk.red(`Project "${project}" missing from “projects” config`);
   }
-  if (project) {
-    yargs.config(projects[project]);
+
+  if (projects) {
+    validateProjects(projects, allProjectNames, 'in the “projects” config');
+  } else {
+    validateProject(config);
   }
 };
-exports.handler = ({ variations, components, all, projects }) => {
-  if (all) {
-    const exitCodes = Object.entries(projects).map(([
-      project,
-      { variations, components, require: requires },
-    ]) => {
-      if (requires) { requireFiles(requires); }
-      try {
-        return getOverallErrors(
-          globToFiles(variations),
-          globToFiles(components),
-          x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
-          x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
-          x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
-        );
-      } catch (e) {
-        console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${e.message}`);
-        return 1;
-      }
-    });
-    process.exit(Math.max(...exitCodes));
-  }
 
-  const exitCode = getOverallErrors(
+exports.handler = (config) => {
+  const { projects, projectNames } = normalizeConfig(config);
+
+  const exitCodes = [];
+
+  forEachProject(projects, projectNames, (project, {
     variations,
     components,
-    x => console.log(x),
-    x => console.warn(x),
-    x => console.error(x),
-  );
-  process.exit(exitCode);
+    require: requires,
+  }) => {
+    if (requires) { requireFiles(requires); }
+    // the purpose of the try/catch here is so that when an error is encountered, we can continue showing useful output rather than terminating the process.
+    try {
+      const exitCode = getOverallErrors(
+        globToFiles(variations),
+        globToFiles(components),
+        x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
+        x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
+        x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
+      );
+      exitCodes.push(exitCode);
+    } catch (e) {
+      console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${e.message}`);
+      exitCodes.push(1); // however, we don't want to exit 0 later if anything has errored
+    }
+  });
+
+  process.exit(Math.max(...exitCodes));
 };

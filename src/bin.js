@@ -2,10 +2,6 @@
 
 'use strict';
 
-const resolve = require('resolve');
-const glob = require('glob');
-const path = require('path');
-
 const globToFiles = require('./helpers/globToFiles');
 const requireFiles = require('./helpers/requireFiles');
 
@@ -19,6 +15,7 @@ require('yargs')
   })
   .option('all', {
     type: 'boolean',
+    default: undefined, // necessary because "conflicts" is stupid with booleans
     describe: 'include all projects',
     implies: 'projects',
   })

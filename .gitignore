@@ -10,6 +10,7 @@ yarn-error.log*
 /*.json
 /commands
 /helpers
+/traversal
 
 # Runtime data
 pids

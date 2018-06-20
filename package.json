@@ -11,7 +11,7 @@
     "build": "babel src -d .",
     "postbuild": "cp src/*.json ./",
     "build:watch": "npm run build -- --watch",
-    "clean": "rimraf *.js commands helpers schema.json",
+    "clean": "rimraf *.js {commands,helpers,traversal} schema.json",
     "lint": "eslint --ext=js,jsx src",
     "prepublish": "npm run build",
     "pretest": "npm run lint",
@@ -22,11 +22,14 @@
   "dependencies": {
     "airbnb-prop-types": "^2.10.0",
     "chalk": "^2.4.1",
+    "find-up": "^3.0.0",
     "glob": "^7.1.2",
     "has": "^1.0.3",
     "jsonschema": "^1.2.4",
     "object.assign": "^4.1.0",
     "object.entries": "^1.0.4",
+    "object.fromentries": "^1.0.0",
+    "object.values": "^1.0.4",
     "resolve": "^1.8.1",
     "yargs": "^10.1.2"
   },
@@ -38,6 +41,10 @@
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.12.0",
+    "react": "*",
     "rimraf": "^2.6.2"
+  },
+  "peerDependencies": {
+    "react": "*"
   }
 }
