@@ -28,7 +28,7 @@ require('yargs')
   .option('require', {
     type: 'string',
     describe: 'Optional path(s) to require, like a shim or custom loader',
-    coerce: requireFiles,
+    coerce: (x) => { requireFiles(x); return x; },
   })
   .option('components', {
     type: 'string',
