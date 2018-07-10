@@ -1,3 +1,5 @@
+'use strict';
+
 const VariationDescriptorSchema = require('./schema');
 
 const {
@@ -42,5 +44,5 @@ module.exports = {
     consumerOptions,
     defaultConsumerOptions,
     options,
-  }
+  },
 };
