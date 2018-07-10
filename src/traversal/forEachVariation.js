@@ -12,7 +12,6 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     component,
     createdAt: rootCreatedAt,
     usage,
-    noVisualSignificance: rootNoVisualSignificance,
     options: allRootConsumerOptions = {},
     metadata = {},
     variations,
@@ -31,7 +30,6 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     const {
       title,
       createdAt: variationCreatedAt,
-      noVisualSignificance: variationNoVisualSignificance,
       options: allVariationConsumerOptions,
       render,
     } = variation;
@@ -47,10 +45,6 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
     const options = { ...rootConsumerOptions, ...variationOptions };
     const createdAt = variationCreatedAt || rootCreatedAt;
 
-    const noVisualSignificance = typeof variationNoVisualSignificance === 'boolean'
-      ? variationNoVisualSignificance
-      : rootNoVisualSignificance;
-
     const newVariation = {
       componentName,
       title,
@@ -59,7 +53,6 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
       options,
       rootOptions,
       ...(createdAt && { createdAt }),
-      ...(typeof noVisualSignificance === 'boolean' && { noVisualSignificance }),
       ...variation,
       options, // eslint-disable-line no-dupe-keys
       metadata,
