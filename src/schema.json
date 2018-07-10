@@ -38,7 +38,7 @@
     "consumerOptions": {
       "oneOf": [
         { "$ref": "#/definitions/consumerOptionsObject" },
-        { "type": "boolean", "const": false }
+        { "type": "boolean" }
       ]
     },
     "defaultConsumerOptions": {

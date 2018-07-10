@@ -24,7 +24,7 @@ module.exports = function forEachVariation(descriptor, consumer, callback) {
 
   const rootOptions = entries(allRootConsumerOptions).reduce((acc, [consumerName, opts]) => ({
     ...acc,
-    [consumerName]: opts || (opts === false ? { disabled: true } : {}),
+    [consumerName]: opts || (typeof opts === 'boolean' ? { disabled: !opts } : {}),
   }), {});
 
   variations.forEach((variation) => {
