@@ -15,7 +15,7 @@
     "lint": "eslint --ext=js,jsx src",
     "prepublish": "npm run build",
     "pretest": "npm run lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "author": "Jordan Harband <ljharb@gmail.com>",
   "license": "MIT",
@@ -35,16 +35,24 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-jest": "^23.4.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-replace-object-assign": "^1.0.0",
     "babel-preset-airbnb": "^2.5.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.12.0",
+    "jest": "^23.4.0",
     "react": "*",
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
     "react": "*"
+  },
+  "jest": {
+    "collectCoverageFrom": ["src/**", "!**/*.json"],
+    "coverageReporters": ["json-summary", "lcov", "html"],
+    "moduleFileExtensions": ["js", "jsx", "json"],
+    "testRegex": "test/.*\\.jsx?$"
   }
 }
