@@ -19,7 +19,7 @@ export default function forEachProjectVariation(consumer, {
   validateProjects(projects, filteredProjectNames, 'returned from `selectProjectNames`');
 
   return function traverseVariations(callback) {
-    if (typeof callback !== 'function' && callback.length !== 1) {
+    if (typeof callback !== 'function' || callback.length !== 1) {
       throw new TypeError('a callback that accepts exactly 1 argument is required');
     }
 
