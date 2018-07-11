@@ -15,7 +15,7 @@ export default function forEachDescriptor(
 ) {
   validateProject(projectConfig);
 
-  if (typeof getDescriptorFromProvider !== 'function' && (getDescriptorFromProvider.length < 1 || getDescriptorFromProvider.length > 2)) {
+  if (typeof getDescriptor !== 'function' && (getDescriptor.length < 1 || getDescriptor.length > 2)) {
     throw new TypeError('`getDescriptor` must be a function that accepts exactly 1 or 2 arguments');
   }
 
