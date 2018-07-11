@@ -23,7 +23,7 @@ module.exports = function normalizeConfig({
     return { ...rest, projectNames: [project] };
   }
   if (!config.projects) {
-    const { project: ___, projects: __, ...rest } = config;
+    const { project: ___, projects, ...rest } = config;
     const packagePath = findUp.sync('package.json', { normalize: false });
     const { name: packageName } = JSON.parse(fs.readFileSync(packagePath));
     const project = packageName || 'root';
