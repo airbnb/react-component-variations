@@ -1,6 +1,6 @@
 'use strict';
 
-const VariationDescriptorSchema = require('./schema');
+const VariationDescriptorSchema = require('./schema.json');
 
 const {
   consumerOptionsObject,
@@ -19,6 +19,7 @@ module.exports = {
         variations: { $ref: '#/definitions/variations' },
         options: { $ref: '#/definitions/options' },
         require: { $ref: '#/definitions/require' },
+        extensions: { $ref: '#/definitions/extensions' },
       },
       required: ['components', 'variations'],
       additionalProperties: false,
@@ -53,6 +54,17 @@ module.exports = {
     requiredFile: {
       type: 'string',
       minLength: 1,
+    },
+    extensions: {
+      type: 'array',
+      items: { $ref: '#/definitions/extension' },
+      uniqueItems: true,
+      minLength: 1,
+    },
+    extension: {
+      type: 'string',
+      minLength: 1,
+      pattern: '^\\..+$',
     },
     consumerOptionsObject,
     consumerOptions,

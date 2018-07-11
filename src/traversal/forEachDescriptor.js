@@ -12,6 +12,7 @@ module.exports = function forEachDescriptor(
   {
     getExtras = () => {},
     getDescriptor = getDescriptorFromProvider,
+    projectRoot = process.cwd(),
   } = {},
 ) {
   validateProject(projectConfig);
@@ -20,8 +21,8 @@ module.exports = function forEachDescriptor(
     throw new TypeError('`getDescriptor` must be a function that accepts exactly 1 or 2 arguments');
   }
 
-  const Components = getComponents(projectConfig.components);
-  const variations = getVariations(projectConfig.variations);
+  const Components = getComponents(projectConfig, projectRoot);
+  const variations = getVariations(projectConfig, projectRoot);
 
   return function traverseVariationDescriptors(callback) {
     if (typeof callback !== 'function' && callback.length !== 1) {

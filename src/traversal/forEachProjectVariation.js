@@ -28,7 +28,7 @@ module.exports = function forEachProjectVariation(consumer, {
     forEachProject(projects, filteredProjectNames, (projectName, projectConfig) => {
       forEachDescriptor(
         projectConfig,
-        { getExtras, getDescriptor },
+        { getExtras, getDescriptor, projectRoot },
       )((descriptor) => {
         forEachVariation(descriptor, consumer, callback);
       });
