@@ -1,4 +1,4 @@
-import values from 'object.values';
+import entries from 'object.entries';
 
 import validateProject from '../helpers/validateProject';
 import getComponents from '../helpers/getComponents';
@@ -26,7 +26,10 @@ export default function forEachDescriptor(
     if (typeof callback !== 'function' && callback.length !== 1) {
       throw new TypeError('a callback that accepts exactly 1 argument is required');
     }
-    values(variations).forEach((provider) => {
+    entries(variations).forEach(([path, provider]) => {
+      if (typeof provider !== 'function') {
+        throw new TypeError(`“${path}” does not export default a function; got ${typeof provider}`);
+      }
       const descriptor = getDescriptor(provider, { Components, variations, getExtras });
       callback(descriptor);
     });

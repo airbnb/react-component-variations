@@ -30,7 +30,6 @@
     "object.assign": "^4.1.0",
     "object.entries": "^1.0.4",
     "object.fromentries": "^1.0.0",
-    "object.values": "^1.0.4",
     "resolve": "^1.8.1",
     "yargs": "^10.1.2"
   },
