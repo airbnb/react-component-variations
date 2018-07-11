@@ -1,6 +1,4 @@
-'use strict';
-
-const VariationDescriptorSchema = require('./schema.json');
+import VariationDescriptorSchema from './schema.json';
 
 const {
   consumerOptionsObject,
@@ -9,7 +7,7 @@ const {
   options,
 } = VariationDescriptorSchema.definitions;
 
-module.exports = {
+export default {
   $ref: '#/definitions/project',
   definitions: {
     project: {

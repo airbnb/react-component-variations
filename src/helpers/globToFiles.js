@@ -1,11 +1,9 @@
-'use strict';
+import path from 'path';
+import glob from 'glob';
 
-const path = require('path');
-const glob = require('glob');
-
-module.exports = function globToFiles(arg) {
+export default function globToFiles(arg) {
   if (Array.isArray(arg)) {
     return arg;
   }
   return glob.sync(arg).map(x => path.normalize(x));
-};
+}

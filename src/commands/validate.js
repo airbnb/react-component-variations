@@ -1,15 +1,13 @@
-'use strict';
+import chalk from 'chalk';
+import has from 'has';
 
-const chalk = require('chalk');
-const has = require('has');
-
-const getValidationErrors = require('../helpers/getValidationErrors');
-const globToFiles = require('../helpers/globToFiles');
-const requireFiles = require('../helpers/requireFiles');
-const forEachProject = require('../traversal/forEachProject');
-const validateProjects = require('../helpers/validateProjects');
-const validateProject = require('../helpers/validateProject');
-const normalizeConfig = require('../helpers/normalizeConfig');
+import getValidationErrors from '../helpers/getValidationErrors';
+import globToFiles from '../helpers/globToFiles';
+import requireFiles from '../helpers/requireFiles';
+import forEachProject from '../traversal/forEachProject';
+import validateProjects from '../helpers/validateProjects';
+import validateProject from '../helpers/validateProject';
+import normalizeConfig from '../helpers/normalizeConfig';
 
 function getOverallErrors(variations = [], components = [], log, warn, error) {
   if (variations.length === 0) {
@@ -40,9 +38,9 @@ function getOverallErrors(variations = [], components = [], log, warn, error) {
   return 0;
 }
 
-exports.command = 'validate [variations]';
-exports.desc = 'validate Variation Providers';
-exports.builder = (yargs) => {
+export const command = 'validate [variations]';
+export const desc = 'validate Variation Providers';
+export const builder = (yargs) => {
   const config = normalizeConfig(yargs.argv);
   const { project, projects, all } = config;
   const allProjectNames = projects ? Object.keys(projects) : [];
@@ -64,7 +62,7 @@ exports.builder = (yargs) => {
   }
 };
 
-exports.handler = (config) => {
+export const handler = (config) => {
   const { projects, projectNames } = normalizeConfig(config);
 
   const exitCodes = [];

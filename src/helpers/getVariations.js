@@ -1,12 +1,10 @@
-'use strict';
+import validateProject from './validateProject';
+import globToFiles from './globToFiles';
+import requireFiles from './requireFiles';
 
-const validateProject = require('./validateProject');
-const globToFiles = require('./globToFiles');
-const requireFiles = require('./requireFiles');
-
-module.exports = function getVariations(projectConfig, projectRoot) {
+export default function getVariations(projectConfig, projectRoot) {
   validateProject(projectConfig);
 
   const { variations, extensions } = projectConfig;
   return requireFiles(globToFiles(variations), { projectRoot, extensions });
-};
+}

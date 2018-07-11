@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-'use strict';
-
-const globToFiles = require('./helpers/globToFiles');
-const requireFiles = require('./helpers/requireFiles');
+import globToFiles from './helpers/globToFiles';
+import requireFiles from './helpers/requireFiles';
 
 require('yargs')
   .commandDir('./commands')

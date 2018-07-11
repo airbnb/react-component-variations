@@ -1,9 +1,7 @@
-'use strict';
+import isValidProjectName from './isValidProjectName';
+import validateProject from './validateProject';
 
-const isValidProjectName = require('./isValidProjectName');
-const validateProject = require('./validateProject');
-
-module.exports = function validateProjects(projects, projectNames, extraMsg = '') {
+export default function validateProjects(projects, projectNames, extraMsg = '') {
   const areProjectNamesValid = projectNames.every(x => isValidProjectName(projects, x));
   if (!areProjectNamesValid) {
     throw new TypeError(`All project names ${extraMsg ? `${extraMsg} ` : ''}must be strings, and present in the “projects” config.
@@ -16,4 +14,4 @@ module.exports = function validateProjects(projects, projectNames, extraMsg = ''
     const projectConfig = projects[project];
     validateProject(projectConfig);
   });
-};
+}

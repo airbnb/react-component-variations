@@ -1,13 +1,11 @@
-'use strict';
+import values from 'object.values';
 
-const values = require('object.values');
+import validateProject from '../helpers/validateProject';
+import getComponents from '../helpers/getComponents';
+import getVariations from '../helpers/getVariations';
+import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
 
-const validateProject = require('../helpers/validateProject');
-const getComponents = require('../helpers/getComponents');
-const getVariations = require('../helpers/getVariations');
-const getDescriptorFromProvider = require('../helpers/getDescriptorFromProvider');
-
-module.exports = function forEachDescriptor(
+export default function forEachDescriptor(
   projectConfig,
   {
     getExtras = () => {},
@@ -33,4 +31,4 @@ module.exports = function forEachDescriptor(
       callback(descriptor);
     });
   };
-};
+}

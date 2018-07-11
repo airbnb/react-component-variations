@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function getDescriptorFromProvider(provider, {
+export default function getDescriptorFromProvider(provider, {
   Components,
   getExtras = () => {},
 }) {
@@ -9,4 +7,4 @@ module.exports = function getDescriptorFromProvider(provider, {
     fixtures: {},
     ...getExtras(),
   });
-};
+}

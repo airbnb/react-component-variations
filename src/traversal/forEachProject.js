@@ -1,8 +1,6 @@
-'use strict';
+import validateProjects from '../helpers/validateProjects';
 
-const validateProjects = require('../helpers/validateProjects');
-
-module.exports = function forEachProject(projects, projectNames, callback) {
+export default function forEachProject(projects, projectNames, callback) {
   if (!Array.isArray(projectNames) || projectNames.length === 0) {
     throw new TypeError('`projectNames` must be a non-empty array');
   }
@@ -17,4 +15,4 @@ module.exports = function forEachProject(projects, projectNames, callback) {
     const projectConfig = projects[project];
     callback(project, projectConfig);
   });
-};
+}

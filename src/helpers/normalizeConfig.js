@@ -1,9 +1,7 @@
-'use strict';
+import fs from 'fs';
+import findUp from 'find-up';
 
-const fs = require('fs');
-const findUp = require('find-up');
-
-module.exports = function normalizeConfig({
+export default function normalizeConfig({
   all,
   /* these are provided by yargs */
   version,
@@ -39,4 +37,4 @@ module.exports = function normalizeConfig({
   }
 
   throw new TypeError('assertion failure: should never happen');
-};
+}

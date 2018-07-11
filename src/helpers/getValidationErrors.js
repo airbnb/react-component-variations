@@ -1,8 +1,6 @@
-'use strict';
-
-const path = require('path');
-const { validate } = require('jsonschema');
-const schema = require('../schema.json');
+import path from 'path';
+import { validate } from 'jsonschema';
+import schema from '../schema.json';
 
 function getProxy(mock) {
   const properties = [];
@@ -83,7 +81,7 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-module.exports = function getValidationErrors(variations) {
+export default function getValidationErrors(variations) {
   const origError = console.error;
   return variations.map((file) => {
     console.error = function throwError(msg) { throw new Error(msg); };
@@ -97,4 +95,4 @@ module.exports = function getValidationErrors(variations) {
       return formatMsg(file, e.message);
     }
   }).filter(Boolean);
-};
+}

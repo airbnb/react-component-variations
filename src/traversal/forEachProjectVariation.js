@@ -1,13 +1,11 @@
-'use strict';
+import getProjectRootConfig from '../helpers/getProjectRootConfig';
+import validateProjects from '../helpers/validateProjects';
 
-const getProjectRootConfig = require('../helpers/getProjectRootConfig');
-const validateProjects = require('../helpers/validateProjects');
+import forEachVariation from './forEachVariation';
+import forEachProject from './forEachProject';
+import forEachDescriptor from './forEachDescriptor';
 
-const forEachVariation = require('./forEachVariation');
-const forEachProject = require('./forEachProject');
-const forEachDescriptor = require('./forEachDescriptor');
-
-module.exports = function forEachProjectVariation(consumer, {
+export default function forEachProjectVariation(consumer, {
   projectRoot = process.cwd(),
   selectProjectNames = x => x,
   getDescriptor = undefined,
@@ -34,4 +32,4 @@ module.exports = function forEachProjectVariation(consumer, {
       });
     });
   };
-};
+}
