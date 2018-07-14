@@ -2,7 +2,13 @@ import getVariations from '../../src/helpers/getVariations';
 
 jest.mock('../../src/helpers/validateProject', () => jest.fn());
 jest.mock('../../src/helpers/globToFiles', () => jest.fn(() => ['a', 'b']));
-jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce((obj, path) => ({ ...obj, [path]: {} }), {})));
+jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce((obj, path) => ({
+  ...obj,
+  [path]: {
+    actualPath: path,
+    Module: { default() {} },
+  },
+}), {})));
 
 describe('getVariations', () => {
   beforeEach(() => {

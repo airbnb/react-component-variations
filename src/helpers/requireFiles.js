@@ -12,9 +12,17 @@ export default function requireFiles(arg, {
   if (arg && !Array.isArray(arg) && typeof arg === 'object') {
     return arg;
   }
-  return fromEntries([].concat(arg).map(requirePath => [
-    requirePath,
+
+  const entries = [].concat(arg).map((requirePath) => {
+    const actualPath = resolve.sync(requirePath, { basedir: projectRoot, extensions });
     // eslint-disable-next-line global-require, import/no-dynamic-require
-    interopRequireDefault(require(resolve.sync(requirePath, { basedir: projectRoot, extensions }))),
-  ]));
+    const Module = interopRequireDefault(require(actualPath));
+
+    return [
+      requirePath,
+      { actualPath, Module },
+    ];
+  });
+
+  return fromEntries(entries);
 }

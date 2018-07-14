@@ -8,8 +8,10 @@ jest.mock('../../src/helpers/getVariations', () => jest.fn(() => mockVariations)
 describe('forEachDescriptor', () => {
   beforeEach(() => {
     mockComponents = {
+      'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
     };
     mockVariations = {
+      'path/to/VariationProvider': jest.fn(),
     };
     require('../../src/helpers/getComponents').mockClear();
     require('../../src/helpers/getVariations').mockClear();
@@ -92,12 +94,18 @@ describe('forEachDescriptor', () => {
     it('iterates variations', () => {
       const a = jest.fn();
       const b = jest.fn();
-      mockVariations = { a, b };
+      mockVariations = {
+        'path/to/a': a,
+        'path/to/b': b,
+      };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getExtras,
         getDescriptor,
         projectRoot,
       });
+
+      const Components = require('../../src/helpers/getComponents')();
+      const variations = require('../../src/helpers/getVariations')();
 
       const callback = jest.fn((x) => {});
       traverse(callback);
@@ -107,16 +115,16 @@ describe('forEachDescriptor', () => {
       expect(firstDescriptorArgs).toEqual([
         a,
         expect.objectContaining({
-          Components: mockComponents,
-          variations: mockVariations,
+          Components,
+          variations,
           getExtras,
         }),
       ]);
       expect(secondDescriptorArgs).toEqual([
         b,
         expect.objectContaining({
-          Components: mockComponents,
-          variations: mockVariations,
+          Components,
+          variations,
           getExtras,
         }),
       ]);
@@ -128,7 +136,7 @@ describe('forEachDescriptor', () => {
     });
 
     it('throws when the provider is not a function', () => {
-      mockVariations = { a: true };
+      mockVariations = { 'path/to/a': true };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getExtras,
         getDescriptor,
@@ -141,7 +149,7 @@ describe('forEachDescriptor', () => {
 
     it('provides a default `getExtras`', () => {
       const a = jest.fn();
-      mockVariations = { a };
+      mockVariations = { 'path/to/a': a };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getDescriptor,
         projectRoot,

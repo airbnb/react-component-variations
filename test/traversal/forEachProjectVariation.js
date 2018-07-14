@@ -12,9 +12,9 @@ const mockDescriptor = {};
 
 const consumer = 'cookie monster';
 
-jest.mock('../../src/helpers/getComponents', () => jest.fn(() => global.components || {
+jest.mock('../../src/helpers/getComponents', () => jest.fn(() => ({
   'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
-}));
+})));
 jest.mock('../../src/helpers/getVariations', () => jest.fn(() => ({
   'path/to/VariationProvider': jest.fn(() => mockDescriptor),
 })));
