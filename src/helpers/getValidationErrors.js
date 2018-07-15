@@ -6,7 +6,9 @@ function getProxy(mock) {
   const properties = [];
   return new Proxy(this || {}, {
     get(target, property) {
-      properties.push(property);
+      if (properties.indexOf(property) < 0) {
+        properties.push(property);
+      }
       return mock.call(target, property);
     },
     ownKeys() {
