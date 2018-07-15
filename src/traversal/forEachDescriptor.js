@@ -22,6 +22,13 @@ export default function forEachDescriptor(
   const Components = getComponents(projectConfig, projectRoot);
   const variations = getVariations(projectConfig, projectRoot);
 
+  if (Object.keys(Components).length === 0) {
+    throw new RangeError('Zero components found');
+  }
+  if (Object.keys(variations).length === 0) {
+    throw new RangeError('Zero variations found');
+  }
+
   return function traverseVariationDescriptors(callback) {
     if (typeof callback !== 'function' || callback.length !== 1) {
       throw new TypeError('a callback that accepts exactly 1 argument is required');

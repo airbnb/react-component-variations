@@ -15,6 +15,12 @@ describe('forEachDescriptor', () => {
     };
     require('../../src/helpers/getComponents').mockClear();
     require('../../src/helpers/getVariations').mockClear();
+    mockComponents = {
+      'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
+    };
+    mockVariations = {
+      'path/to/VariationProvider': jest.fn(),
+    };
   });
 
   it('is a function', () => {
@@ -77,18 +83,22 @@ describe('forEachDescriptor', () => {
       expect(() => traverse((a, b) => {})).toThrow(TypeError);
     });
 
-    it('is a noop with no variations', () => {
-      mockVariations = {};
-      const traverse = forEachDescriptor(mockProjectConfig, {
+    it('throws with no components', () => {
+      mockComponents = {};
+      expect(() => forEachDescriptor(mockProjectConfig, {
         getExtras,
         getDescriptor,
         projectRoot,
-      });
+      })).toThrow(RangeError);
+    });
 
-      const callback = jest.fn((x) => {});
-      traverse(callback);
-
-      expect(callback).toHaveBeenCalledTimes(0);
+    it('throws with no variations', () => {
+      mockVariations = {};
+      expect(() => forEachDescriptor(mockProjectConfig, {
+        getExtras,
+        getDescriptor,
+        projectRoot,
+      })).toThrow(RangeError);
     });
 
     it('iterates variations', () => {
