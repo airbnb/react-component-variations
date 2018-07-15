@@ -30,6 +30,7 @@
     "object.assign": "^4.1.0",
     "object.entries": "^1.0.4",
     "object.fromentries": "^1.0.0",
+    "object.values": "^1.0.4",
     "resolve": "^1.8.1",
     "yargs": "^10.1.2"
   },
@@ -50,9 +51,20 @@
     "react": "*"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**", "!**/*.json"],
-    "coverageReporters": ["json-summary", "lcov", "html"],
-    "moduleFileExtensions": ["js", "jsx", "json"],
+    "collectCoverageFrom": [
+      "src/**",
+      "!**/*.json"
+    ],
+    "coverageReporters": [
+      "json-summary",
+      "lcov",
+      "html"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json"
+    ],
     "testRegex": "test/.*\\.jsx?$"
   }
 }

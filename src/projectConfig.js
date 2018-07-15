@@ -18,6 +18,7 @@ export default {
         options: { $ref: '#/definitions/options' },
         require: { $ref: '#/definitions/require' },
         extensions: { $ref: '#/definitions/extensions' },
+        flattenComponentTree: { type: 'boolean' },
       },
       required: ['components', 'variations'],
       additionalProperties: false,
