@@ -37,7 +37,12 @@ export default function forEachDescriptor(
       if (typeof provider !== 'function') {
         throw new TypeError(`“${path}” does not export default a function; got ${typeof provider}`);
       }
-      const descriptor = getDescriptor(provider, { Components, variations, getExtras });
+      const descriptor = getDescriptor(provider, {
+        Components,
+        variations,
+        getExtras,
+        projectConfig,
+      });
       callback(descriptor);
     });
   };

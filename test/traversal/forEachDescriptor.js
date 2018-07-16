@@ -125,6 +125,7 @@ describe('forEachDescriptor', () => {
       expect(firstDescriptorArgs).toEqual([
         a,
         expect.objectContaining({
+          projectConfig: mockProjectConfig,
           Components,
           variations,
           getExtras,
@@ -133,6 +134,7 @@ describe('forEachDescriptor', () => {
       expect(secondDescriptorArgs).toEqual([
         b,
         expect.objectContaining({
+          projectConfig: mockProjectConfig,
           Components,
           variations,
           getExtras,

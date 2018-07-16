@@ -1,6 +1,8 @@
 import path from 'path';
+import has from 'has';
 import { validate } from 'jsonschema';
 import schema from '../schema.json';
+import getProjectExtras from './getProjectExtras';
 
 function getProxy(mock) {
   const properties = [];
@@ -36,15 +38,27 @@ function ExtraMock(extra, property) {
   this.property = property;
   return getProxy.call(this, getStaticProperty);
 }
-function ExtrasMock(extra) {
-  return getProxy(property => new ExtraMock(extra, property));
+function ExtrasMock(extra, {
+  projectConfig,
+  projectRoot,
+}) {
+  const projectExtras = getProjectExtras({
+    projectConfig,
+    projectRoot,
+  });
+  return getProxy(property => (
+    has(projectExtras, property) ? projectExtras[property] : new ExtraMock(extra, property)
+  ));
 }
 
 function formatMsg(file, msg) {
   return `${file}:\n  ${msg}\n`;
 }
 
-function validateDescriptorProvider(file, provider) {
+function validateDescriptorProvider(file, provider, {
+  projectConfig,
+  projectRoot,
+}) {
   if (typeof provider !== 'function') {
     throw new TypeError('provider must be a function');
   }
@@ -54,7 +68,10 @@ function validateDescriptorProvider(file, provider) {
   }
 
   const Components = getProxy(name => (name.endsWith('/') ? Components : new ComponentMock(name)));
-  const Extras = getProxy(extra => new ExtrasMock(extra));
+  const Extras = getProxy(extra => new ExtrasMock(extra, {
+    projectConfig,
+    projectRoot,
+  }));
 
   const descriptor = provider(Components, Extras);
 
@@ -83,14 +100,20 @@ function validateDescriptorProvider(file, provider) {
   });
 }
 
-export default function getValidationErrors(variations) {
+export default function getValidationErrors(variations, {
+  projectConfig,
+  projectRoot,
+}) {
   const origError = console.error;
   return variations.map((file) => {
     console.error = function throwError(msg) { throw new Error(msg); };
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const module = require(path.join(process.cwd(), file));
-      validateDescriptorProvider(file, module.default || module);
+      validateDescriptorProvider(file, module.default || module, {
+        projectConfig,
+        projectRoot,
+      });
       console.error = origError;
       return null;
     } catch (e) {

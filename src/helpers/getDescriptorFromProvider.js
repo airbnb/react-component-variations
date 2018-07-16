@@ -1,10 +1,18 @@
+import getProjectExtras from './getProjectExtras';
+
 export default function getDescriptorFromProvider(provider, {
   Components,
-  getExtras = () => {},
+  projectConfig,
+  projectRoot,
+  getExtras = undefined,
 }) {
   return provider(Components, {
     action() { return () => {}; },
     fixtures: {},
-    ...getExtras(),
+    ...getProjectExtras({
+      projectConfig,
+      projectRoot,
+      getExtras,
+    }),
   });
 }

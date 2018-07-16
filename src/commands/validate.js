@@ -9,7 +9,15 @@ import validateProjects from '../helpers/validateProjects';
 import validateProject from '../helpers/validateProject';
 import normalizeConfig from '../helpers/normalizeConfig';
 
-function getOverallErrors(variations = [], components = [], log, warn, error) {
+function getOverallErrors({
+  variations = [],
+  components = [],
+  log,
+  warn,
+  error,
+  projectConfig,
+  projectRoot,
+}) {
   if (variations.length === 0) {
     error(chalk.red(chalk.bold('No Variation Providers found.')));
     return 1;
@@ -28,7 +36,10 @@ function getOverallErrors(variations = [], components = [], log, warn, error) {
     return 1;
   }
 
-  const errors = getValidationErrors(variations);
+  const errors = getValidationErrors(variations, {
+    projectConfig,
+    projectRoot,
+  });
 
   if (errors.length > 0) {
     errors.forEach((e) => { warn(e); });
@@ -67,21 +78,23 @@ export const handler = (config) => {
 
   const exitCodes = [];
 
-  forEachProject(projects, projectNames, (project, {
-    variations,
-    components,
-    require: requires,
-  }) => {
+  forEachProject(projects, projectNames, (project, projectConfig) => {
+    const {
+      variations,
+      components,
+      require: requires,
+    } = projectConfig;
     if (requires) { requireFiles(requires); }
     // the purpose of the try/catch here is so that when an error is encountered, we can continue showing useful output rather than terminating the process.
     try {
-      const exitCode = getOverallErrors(
-        globToFiles(variations),
-        globToFiles(components),
-        x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
-        x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
-        x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
-      );
+      const exitCode = getOverallErrors({
+        variations: globToFiles(variations),
+        components: globToFiles(components),
+        log: x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
+        warn: x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
+        error: x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
+        projectConfig,
+      });
       exitCodes.push(exitCode);
     } catch (e) {
       console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${e.message}`);
