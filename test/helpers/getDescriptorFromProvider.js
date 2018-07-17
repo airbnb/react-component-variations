@@ -43,8 +43,6 @@ describe('getDescriptorFromProvider', () => {
 
     expect(actualComponents).toBe(Components);
     expect(actualExtras).toMatchObject({
-      action: expect.any(Function),
-      fixtures: {},
       a: true,
     });
   });
@@ -58,29 +56,7 @@ describe('getDescriptorFromProvider', () => {
     const { calls: [args] } = provider.mock;
     const [actualComponents, actualExtras] = args;
 
-    expect(actualExtras).toMatchObject({
-      action: expect.any(Function),
-      fixtures: {},
-    });
-  });
-
-  it('provides an appropriate "action" mock in the returned descriptor', () => {
-    const provider = jest.fn();
-    const Components = {};
-
-    getDescriptorFromProvider(provider, { Components, projectConfig });
-    expect(provider).toHaveBeenCalledTimes(1);
-    const { calls: [args] } = provider.mock;
-    const [actualComponents, actualExtras] = args;
-
-    expect(actualExtras).toMatchObject({
-      action: expect.any(Function),
-    });
-
-    const actionReturn = actualExtras.action();
-    expect(typeof actionReturn).toBe('function');
-
-    expect(actionReturn()).toBe(undefined);
+    expect(actualExtras).toMatchObject({});
   });
 
   it('invokes the provided `getExtras`', () => {

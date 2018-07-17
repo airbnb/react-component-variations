@@ -6,13 +6,9 @@ export default function getDescriptorFromProvider(provider, {
   projectRoot,
   getExtras = undefined,
 }) {
-  return provider(Components, {
-    action() { return () => {}; },
-    fixtures: {},
-    ...getProjectExtras({
-      projectConfig,
-      projectRoot,
-      getExtras,
-    }),
-  });
+  return provider(Components, getProjectExtras({
+    projectConfig,
+    projectRoot,
+    getExtras,
+  }));
 }

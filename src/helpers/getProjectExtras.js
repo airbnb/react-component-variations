@@ -1,5 +1,6 @@
 import fromEntries from 'object.fromentries';
 import entries from 'object.entries';
+import has from 'has';
 
 import validateProject from './validateProject';
 import requireFile from './requireFile';
@@ -13,10 +14,13 @@ export default function getProjectExtras({
 
   const { extras = {}, extensions } = projectConfig;
 
+  const projectExtraEntries = entries(extras).map(([key, filePath]) => {
+    const { Module } = requireFile(filePath, { projectRoot, extensions });
+    return [key, has(Module, 'default') ? Module.default : Module];
+  });
+
   return {
-    ...fromEntries(entries(extras).map(([key, filePath]) => ({
-      [key]: requireFile(filePath, { projectRoot, extensions }),
-    }))),
+    ...fromEntries(projectExtraEntries),
     ...getExtras(),
   };
 }
