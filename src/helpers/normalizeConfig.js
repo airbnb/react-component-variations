@@ -1,5 +1,7 @@
 import fs from 'fs';
 import findUp from 'find-up';
+import fromEntries from 'object.fromentries';
+import entries from 'object.entries';
 
 export default function normalizeConfig({
   all,
@@ -36,5 +38,17 @@ export default function normalizeConfig({
     };
   }
 
-  throw new TypeError('assertion failure: should never happen');
+  const { project, extras, ...rest } = config;
+  return {
+    ...rest,
+    extras,
+    projectNames: Object.keys(config.projects),
+    projects: fromEntries(entries(config.projects).map(([projectName, projectConfig]) => [projectName, {
+      ...projectConfig,
+      extras: {
+        ...projectConfig.extras,
+        ...extras,
+      },
+    }])),
+  };
 }
