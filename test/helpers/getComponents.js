@@ -42,7 +42,7 @@ describe('getComponents', () => {
     getComponents(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
-    expect(mock).toHaveBeenCalledWith(projectConfig.components);
+    expect(mock).toHaveBeenCalledWith(projectConfig.components, projectRoot);
   });
 
   it('works with `flattenComponentTree` option', () => {
@@ -57,7 +57,7 @@ describe('getComponents', () => {
     getComponents(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
-    expect(mock).toHaveBeenCalledWith(projectConfig.components);
+    expect(mock).toHaveBeenCalledWith(projectConfig.components, projectRoot);
   });
 
   it('passes expected args to `requireFiles`', () => {

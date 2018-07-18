@@ -42,7 +42,7 @@ describe('getVariations', () => {
     getVariations(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
-    expect(mock).toHaveBeenCalledWith(projectConfig.variations);
+    expect(mock).toHaveBeenCalledWith(projectConfig.variations, projectRoot);
   });
 
   it('passes expected args to `requireFiles`', () => {

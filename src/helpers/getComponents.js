@@ -18,7 +18,8 @@ export default function getComponents(projectConfig, projectRoot) {
     extensions,
     flattenComponentTree,
   } = projectConfig;
-  const fileMap = requireFiles(globToFiles(components), { projectRoot, extensions });
+  const files = globToFiles(components, projectRoot);
+  const fileMap = requireFiles(files, { projectRoot, extensions });
 
   return values(fileMap).reduce((
     Components,

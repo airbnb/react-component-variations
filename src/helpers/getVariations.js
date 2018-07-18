@@ -10,7 +10,8 @@ export default function getVariations(projectConfig, projectRoot) {
   validateProject(projectConfig);
 
   const { variations, extensions } = projectConfig;
-  const fileMap = requireFiles(globToFiles(variations), { projectRoot, extensions });
+  const files = globToFiles(variations, projectRoot);
+  const fileMap = requireFiles(files, { projectRoot, extensions });
 
   return fromEntries(entries(fileMap).map(([requirePath, { Module }]) => [
     requirePath,
