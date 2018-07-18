@@ -13,6 +13,7 @@ export default {
     project: {
       type: 'object',
       properties: {
+        componentsRoot: { $ref: '#/definitions/rootDir' },
         components: { $ref: '#/definitions/components' },
         variations: { $ref: '#/definitions/variations' },
         options: { $ref: '#/definitions/options' },
@@ -32,6 +33,11 @@ export default {
         items: { $ref: '#/definitions/relativeGlobPath' },
         uniqueItems: true,
       }],
+    },
+    rootDir: {
+      type: 'string',
+      pattern: '^[^*]+/$',
+      minLength: 1,
     },
     variations: {
       oneOf: [{

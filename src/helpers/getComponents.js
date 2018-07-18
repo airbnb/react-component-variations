@@ -1,13 +1,16 @@
 import values from 'object.values';
 import has from 'has';
+import path from 'path';
 
 import validateProject from './validateProject';
 import globToFiles from './globToFiles';
 import requireFiles from './requireFiles';
 import addComponentAliases from './addComponentAliases';
 
-function stripRoot(path, projectRoot) {
-  return path.startsWith(projectRoot) ? `./${path.slice(projectRoot.length + 1)}` : path;
+function stripRoot(filePath, projectRoot) {
+  return filePath.startsWith(projectRoot)
+    ? filePath.slice(projectRoot.length).replace(/^\/?/, './')
+    : filePath;
 }
 
 export default function getComponents(projectConfig, projectRoot) {
@@ -15,18 +18,20 @@ export default function getComponents(projectConfig, projectRoot) {
 
   const {
     components,
+    componentsRoot,
     extensions,
     flattenComponentTree,
   } = projectConfig;
-  const files = globToFiles(components, projectRoot);
-  const fileMap = requireFiles(files, { projectRoot, extensions });
+  const actualComponentRoot = componentsRoot ? path.join(projectRoot, componentsRoot) : projectRoot;
+  const files = globToFiles(components, actualComponentRoot);
+  const fileMap = requireFiles(files, { projectRoot: actualComponentRoot, extensions });
 
   return values(fileMap).reduce((
     Components,
     { actualPath, Module },
   ) => addComponentAliases(
     Components,
-    stripRoot(actualPath, projectRoot),
+    stripRoot(actualPath, actualComponentRoot),
     has(Module, 'default') ? Module.default : Module,
     flattenComponentTree,
   ), {});
