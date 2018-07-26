@@ -15,7 +15,7 @@ export default function forEachDescriptor(
 ) {
   validateProject(projectConfig);
 
-  if (typeof getDescriptor !== 'function' || (getDescriptor.length < 1 || getDescriptor.length > 2)) {
+  if (typeof getDescriptor !== 'function' || getDescriptor.length < 1 || getDescriptor.length > 2) {
     throw new TypeError('`getDescriptor` must be a function that accepts exactly 1 or 2 arguments');
   }
 
@@ -30,8 +30,8 @@ export default function forEachDescriptor(
   }
 
   return function traverseVariationDescriptors(callback) {
-    if (typeof callback !== 'function' || callback.length !== 1) {
-      throw new TypeError('a callback that accepts exactly 1 argument is required');
+    if (typeof callback !== 'function' || callback.length < 1 || callback.length > 2) {
+      throw new TypeError('a callback that accepts exactly 1 or 2 arguments is required');
     }
     entries(variations).forEach(([path, provider]) => {
       if (typeof provider !== 'function') {
@@ -43,7 +43,9 @@ export default function forEachDescriptor(
         getExtras,
         projectConfig,
       });
-      callback(descriptor);
+      callback(descriptor, {
+        variationPath: path,
+      });
     });
   };
 }

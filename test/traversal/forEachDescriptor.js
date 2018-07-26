@@ -80,7 +80,9 @@ describe('forEachDescriptor', () => {
       });
 
       expect(() => traverse(() => {})).toThrow(TypeError);
-      expect(() => traverse((a, b) => {})).toThrow(TypeError);
+      expect(() => traverse((a) => {})).not.toThrow(TypeError);
+      expect(() => traverse((a, b) => {})).not.toThrow(TypeError);
+      expect(() => traverse((a, b, c) => {})).toThrow(TypeError);
     });
 
     it('throws with no components', () => {
@@ -104,9 +106,11 @@ describe('forEachDescriptor', () => {
     it('iterates variations', () => {
       const a = jest.fn();
       const b = jest.fn();
+      const variationPathA = 'path/to/a';
+      const variationPathB = 'path/to/b';
       mockVariations = {
-        'path/to/a': a,
-        'path/to/b': b,
+        [variationPathA]: a,
+        [variationPathB]: b,
       };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getExtras,
@@ -143,8 +147,8 @@ describe('forEachDescriptor', () => {
 
       expect(callback).toHaveBeenCalledTimes(2);
       const [first, second] = callback.mock.calls;
-      expect(first).toEqual([descriptor]);
-      expect(second).toEqual([descriptor]);
+      expect(first).toEqual([descriptor, { variationPath: variationPathA }]);
+      expect(second).toEqual([descriptor, { variationPath: variationPathB }]);
     });
 
     it('throws when the provider is not a function', () => {
