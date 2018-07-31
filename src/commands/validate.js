@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import has from 'has';
 
+import getComponents from '../helpers/getComponents';
 import getValidationErrors from '../helpers/getValidationErrors';
 import globToFiles from '../helpers/globToFiles';
 import requireFiles from '../helpers/requireFiles';
@@ -11,7 +12,7 @@ import normalizeConfig from '../helpers/normalizeConfig';
 
 function getOverallErrors({
   variations = [],
-  components = [],
+  components = {},
   log,
   warn,
   error,
@@ -23,15 +24,16 @@ function getOverallErrors({
     return 1;
   }
 
-  if (components.length === 0) {
+  const componentCount = Object.keys(components).length;
+  if (componentCount === 0) {
     error(chalk.red(chalk.bold('No Components found.')));
     return 1;
   }
 
-  log(chalk.blue(`${chalk.bold(components.length)} Components found...`));
+  log(chalk.blue(`${chalk.bold(componentCount)} Components found...`));
   log(chalk.green(`${chalk.bold(variations.length)} Variation Providers found...`));
 
-  if (components.length < variations.length) {
+  if (componentCount < variations.length) {
     error(chalk.red(chalk.bold('Found fewer Components than Variation Providers.')));
     return 1;
   }
@@ -74,6 +76,7 @@ export const builder = (yargs) => {
 };
 
 export const handler = (config) => {
+  const projectRoot = process.cwd();
   const { projects, projectNames } = normalizeConfig(config);
 
   const exitCodes = [];
@@ -81,19 +84,22 @@ export const handler = (config) => {
   forEachProject(projects, projectNames, (project, projectConfig) => {
     const {
       variations,
-      components,
       require: requires,
     } = projectConfig;
+    const log = x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`);
+    log(chalk.yellow('validating...'));
+
     if (requires) { requireFiles(requires); }
     // the purpose of the try/catch here is so that when an error is encountered, we can continue showing useful output rather than terminating the process.
     try {
       const exitCode = getOverallErrors({
         variations: globToFiles(variations),
-        components: globToFiles(components),
-        log: x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`),
+        components: getComponents(projectConfig, projectRoot, { fileMapOnly: true }),
+        log,
         warn: x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),
         error: x => console.error(`${chalk.inverse(chalk.red(`Project “${project}”`))}: ${x}`),
         projectConfig,
+        projectRoot,
       });
       exitCodes.push(exitCode);
     } catch (e) {

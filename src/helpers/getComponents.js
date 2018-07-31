@@ -13,7 +13,9 @@ function stripRoot(filePath, projectRoot) {
     : filePath;
 }
 
-export default function getComponents(projectConfig, projectRoot) {
+export default function getComponents(projectConfig, projectRoot, {
+  fileMapOnly = false,
+} = {}) {
   validateProject(projectConfig);
 
   const {
@@ -25,6 +27,10 @@ export default function getComponents(projectConfig, projectRoot) {
   const actualComponentRoot = componentsRoot ? path.join(projectRoot, componentsRoot) : projectRoot;
   const files = globToFiles(components, actualComponentRoot);
   const fileMap = requireFiles(files, { projectRoot: actualComponentRoot, extensions });
+
+  if (fileMapOnly) {
+    return fileMap;
+  }
 
   return values(fileMap).reduce((
     Components,
