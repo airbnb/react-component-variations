@@ -1,5 +1,6 @@
 import getProjectRootConfig from '../helpers/getProjectRootConfig';
 import validateProjects from '../helpers/validateProjects';
+import requireFiles from '../helpers/requireFiles';
 
 import forEachVariation from './forEachVariation';
 import forEachProject from './forEachProject';
@@ -11,7 +12,13 @@ export default function forEachProjectVariation(consumer, {
   getDescriptor = undefined,
   getExtras = undefined,
 } = {}) {
-  const { projects } = getProjectRootConfig(projectRoot); // adds 1 "projects" and "project" of package.json name, normalizes each project config and merges down
+  // adds 1 "projects" and "project" of package.json name, normalizes each project config and merges down
+  const {
+    projects,
+    require: requires,
+  } = getProjectRootConfig(projectRoot);
+
+  if (requires) { requireFiles(requires); }
 
   const allProjectNames = Object.keys(projects);
   const filteredProjectNames = [].concat(selectProjectNames(allProjectNames));
