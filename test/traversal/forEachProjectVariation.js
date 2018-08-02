@@ -66,8 +66,8 @@ describe('forEachProjectVariation', () => {
     expect(forEachVariation).toHaveBeenCalledTimes(mockProjectNames.length);
     const { calls } = forEachVariation.mock;
 
-    calls.forEach((args) => {
-      expect(args).toEqual([mockDescriptor, consumer, callback]);
+    calls.forEach((args, idx) => {
+      expect(args).toEqual([{ projectName: mockProjectNames[idx], ...mockDescriptor }, consumer, callback]);
     });
   });
 });

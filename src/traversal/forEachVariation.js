@@ -8,12 +8,14 @@ export default function forEachVariation(descriptor, consumer, callback) {
 
   const {
     component,
+    projectName,
     createdAt: rootCreatedAt,
     usage,
     options: allRootConsumerOptions = {},
     metadata = {},
     variations,
   } = descriptor;
+
   const { [consumer]: rootConsumerOptions = {} } = allRootConsumerOptions || {};
 
   // this consumer is disabled
@@ -45,6 +47,7 @@ export default function forEachVariation(descriptor, consumer, callback) {
 
     const newVariation = {
       componentName,
+      projectName,
       title,
       component,
       usage,
