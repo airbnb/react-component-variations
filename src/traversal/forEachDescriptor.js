@@ -2,7 +2,7 @@ import entries from 'object.entries';
 
 import validateProject from '../helpers/validateProject';
 import getComponents from '../helpers/getComponents';
-import getVariations from '../helpers/getVariations';
+import getVariationProviders from '../helpers/getVariationProviders';
 import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
 
 export default function forEachDescriptor(
@@ -20,7 +20,7 @@ export default function forEachDescriptor(
   }
 
   const Components = getComponents(projectConfig, projectRoot);
-  const variations = getVariations(projectConfig, projectRoot);
+  const variations = getVariationProviders(projectConfig, projectRoot);
 
   if (Object.keys(Components).length === 0) {
     throw new RangeError('Zero components found');

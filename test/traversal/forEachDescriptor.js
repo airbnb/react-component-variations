@@ -3,7 +3,7 @@ import forEachDescriptor from '../../src/traversal/forEachDescriptor';
 let mockComponents, mockVariations;
 
 jest.mock('../../src/helpers/getComponents', () => jest.fn(() => mockComponents));
-jest.mock('../../src/helpers/getVariations', () => jest.fn(() => mockVariations));
+jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => mockVariations));
 
 describe('forEachDescriptor', () => {
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('forEachDescriptor', () => {
       'path/to/VariationProvider': jest.fn(),
     };
     require('../../src/helpers/getComponents').mockClear();
-    require('../../src/helpers/getVariations').mockClear();
+    require('../../src/helpers/getVariationProviders').mockClear();
     mockComponents = {
       'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
     };
@@ -46,17 +46,17 @@ describe('forEachDescriptor', () => {
     expect(typeof traverse).toBe('function');
   });
 
-  it('calls `getComponents` and `getVariations`', () => {
+  it('calls `getComponents` and `getVariationProviders`', () => {
     const getComponents = require('../../src/helpers/getComponents');
-    const getVariations = require('../../src/helpers/getVariations');
+    const getVariationProviders = require('../../src/helpers/getVariationProviders');
 
     forEachDescriptor(mockProjectConfig);
 
     expect(getComponents).toHaveBeenCalledTimes(1);
     expect(getComponents).toHaveBeenCalledWith(mockProjectConfig, expect.any(String));
 
-    expect(getVariations).toHaveBeenCalledTimes(1);
-    expect(getVariations).toHaveBeenCalledWith(mockProjectConfig, expect.any(String));
+    expect(getVariationProviders).toHaveBeenCalledTimes(1);
+    expect(getVariationProviders).toHaveBeenCalledWith(mockProjectConfig, expect.any(String));
   });
 
   describe('traversal function', () => {
@@ -119,7 +119,7 @@ describe('forEachDescriptor', () => {
       });
 
       const Components = require('../../src/helpers/getComponents')();
-      const variations = require('../../src/helpers/getVariations')();
+      const variations = require('../../src/helpers/getVariationProviders')();
 
       const callback = jest.fn((x) => {});
       traverse(callback);

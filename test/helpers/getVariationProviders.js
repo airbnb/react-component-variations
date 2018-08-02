@@ -1,4 +1,4 @@
-import getVariations from '../../src/helpers/getVariations';
+import getVariationProviders from '../../src/helpers/getVariationProviders';
 
 jest.mock('../../src/helpers/validateProject', () => jest.fn());
 jest.mock('../../src/helpers/globToFiles', () => jest.fn(() => ['a', 'b']));
@@ -10,7 +10,7 @@ jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce(
   },
 }), {})));
 
-describe('getVariations', () => {
+describe('getVariationProviders', () => {
   beforeEach(() => {
     require('../../src/helpers/validateProject').mockClear();
     require('../../src/helpers/globToFiles').mockClear();
@@ -25,7 +25,7 @@ describe('getVariations', () => {
     const mock = require('../../src/helpers/validateProject');
     const projectRoot = 'a/b/c';
 
-    getVariations(projectConfig, projectRoot);
+    getVariationProviders(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
     expect(mock).toHaveBeenCalledWith(projectConfig);
@@ -39,7 +39,7 @@ describe('getVariations', () => {
     const mock = require('../../src/helpers/globToFiles');
     const projectRoot = 'a/b/c';
 
-    getVariations(projectConfig, projectRoot);
+    getVariationProviders(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
     expect(mock).toHaveBeenCalledWith(projectConfig.variations, projectRoot);
@@ -54,7 +54,7 @@ describe('getVariations', () => {
     const mock = require('../../src/helpers/requireFiles');
     const projectRoot = 'a/b/c';
 
-    getVariations(projectConfig, projectRoot);
+    getVariationProviders(projectConfig, projectRoot);
 
     expect(mock).toHaveBeenCalledTimes(1);
     const { calls: [args] } = mock.mock;
