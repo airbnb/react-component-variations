@@ -15,6 +15,7 @@ export default {
       properties: {
         componentsRoot: { $ref: '#/definitions/rootDir' },
         components: { $ref: '#/definitions/components' },
+        variationsRoot: { $ref: '#/definitions/rootDir' },
         variations: { $ref: '#/definitions/variations' },
         options: { $ref: '#/definitions/options' },
         require: { $ref: '#/definitions/require' },

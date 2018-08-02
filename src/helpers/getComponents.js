@@ -24,9 +24,9 @@ export default function getComponents(projectConfig, projectRoot, {
     extensions,
     flattenComponentTree,
   } = projectConfig;
-  const actualComponentRoot = componentsRoot ? path.join(projectRoot, componentsRoot) : projectRoot;
-  const files = globToFiles(components, actualComponentRoot);
-  const fileMap = requireFiles(files, { projectRoot: actualComponentRoot, extensions });
+  const actualRoot = componentsRoot ? path.join(projectRoot, componentsRoot) : projectRoot;
+  const files = globToFiles(components, actualRoot);
+  const fileMap = requireFiles(files, { projectRoot: actualRoot, extensions });
 
   if (fileMapOnly) {
     return fileMap;
@@ -37,7 +37,7 @@ export default function getComponents(projectConfig, projectRoot, {
     { actualPath, Module },
   ) => addComponentAliases(
     Components,
-    stripRoot(actualPath, actualComponentRoot),
+    stripRoot(actualPath, actualRoot),
     has(Module, 'default') ? Module.default : Module,
     flattenComponentTree,
   ), {});

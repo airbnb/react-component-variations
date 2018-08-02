@@ -1,12 +1,13 @@
+import path from 'path';
 import getComponents from '../../src/helpers/getComponents';
 
 jest.mock('../../src/helpers/validateProject', () => jest.fn());
-jest.mock('../../src/helpers/globToFiles', () => jest.fn(() => ['a', 'b']));
+jest.mock('../../src/helpers/globToFiles', () => jest.fn(() => ['a', 'b', 'n']));
 jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce((obj, path) => ({
   ...obj,
   [path]: {
     actualPath: path,
-    Module: { default() {} },
+    Module: path >= 'foo' ? { default() {} } : { named() {} },
   },
 }), {})));
 
@@ -45,6 +46,24 @@ describe('getComponents', () => {
     expect(mock).toHaveBeenCalledWith(projectConfig.components, projectRoot);
   });
 
+  it('passes components path to `globToFiles` with `componentsRoot`', () => {
+    const projectConfig = {
+      components: 'foo',
+      componentsRoot: 'bar',
+      extensions: ['.js', '.jsx'],
+    };
+    const mock = require('../../src/helpers/globToFiles');
+    const projectRoot = 'a/b/c';
+
+    getComponents(projectConfig, projectRoot);
+
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(mock).toHaveBeenCalledWith(
+      projectConfig.components,
+      path.join(projectRoot, projectConfig.componentsRoot),
+    );
+  });
+
   it('works with `flattenComponentTree` option', () => {
     const projectConfig = {
       components: 'foo/index',
@@ -79,5 +98,20 @@ describe('getComponents', () => {
       projectRoot,
       extensions: projectConfig.extensions,
     });
+  });
+
+  it('returns the fileMap directly when `fileMapOnly`', () => {
+    const projectConfig = {
+      components: 'foo',
+      extensions: ['.js', '.jsx'],
+    };
+    const projectRoot = 'a/b/c';
+    const mock = require('../../src/helpers/requireFiles');
+
+    const sentinel = {};
+    mock.mockReturnValue(sentinel);
+    const fileMap = getComponents(projectConfig, projectRoot, { fileMapOnly: true });
+
+    expect(fileMap).toBe(sentinel);
   });
 });
