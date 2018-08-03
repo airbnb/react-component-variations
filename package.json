@@ -15,7 +15,8 @@
     "lint": "eslint --ext=js,jsx src",
     "prepublish": "npm run build",
     "pretest": "npm run lint",
-    "test": "jest --coverage"
+    "tests-only": "jest --coverage",
+    "test": "npm run tests-only"
   },
   "author": "Jordan Harband <ljharb@gmail.com>",
   "license": "MIT",
