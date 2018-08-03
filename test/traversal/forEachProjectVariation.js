@@ -1,8 +1,13 @@
+import interopRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
+global.interopRequireDefault = interopRequireDefault;
+
 import forEachProjectVariation from '../../src/traversal/forEachProjectVariation';
 
 const mockProjectConfig = {
-  components: 'glob/path/to/components',
-  variations: 'glob/path/to/variations',
+  componentsRoot: 'glob/',
+  components: './path/to/components/**',
+  variationsRoot: 'glob/',
+  variations: './path/to/variations/**',
 };
 
 const mockProjectName = 'some awesome project';
@@ -16,7 +21,10 @@ jest.mock('../../src/helpers/getComponents', () => jest.fn(() => ({
   'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
 })));
 jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => ({
-  'path/to/VariationProvider': jest.fn(() => mockDescriptor),
+  'path/to/VariationProvider': {
+    actualPath: 'path/to/RealVariationProvider.js',
+    Module: global.interopRequireDefault(jest.fn(() => mockDescriptor)),
+  },
 })));
 
 const mockProjectNames = [mockProjectName, mockProjectName2];

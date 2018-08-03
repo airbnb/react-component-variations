@@ -1,3 +1,4 @@
+import interopRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
 import forEachDescriptor from '../../src/traversal/forEachDescriptor';
 
 let mockComponents, mockVariations;
@@ -7,19 +8,16 @@ jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => mockVar
 
 describe('forEachDescriptor', () => {
   beforeEach(() => {
-    mockComponents = {
-      'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
-    };
-    mockVariations = {
-      'path/to/VariationProvider': jest.fn(),
-    };
     require('../../src/helpers/getComponents').mockClear();
     require('../../src/helpers/getVariationProviders').mockClear();
     mockComponents = {
       'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
     };
     mockVariations = {
-      'path/to/VariationProvider': jest.fn(),
+      'path/to/VariationProvider': {
+        Module: interopRequireDefault(jest.fn()),
+        actualPath: '/full/path/to/VariationProvider.jsx',
+      },
     };
   });
 
@@ -56,7 +54,13 @@ describe('forEachDescriptor', () => {
     expect(getComponents).toHaveBeenCalledWith(mockProjectConfig, expect.any(String));
 
     expect(getVariationProviders).toHaveBeenCalledTimes(1);
-    expect(getVariationProviders).toHaveBeenCalledWith(mockProjectConfig, expect.any(String));
+    expect(getVariationProviders).toHaveBeenCalledWith(
+      mockProjectConfig,
+      expect.any(String),
+      expect.objectContaining({
+        fileMapOnly: true,
+      }),
+    );
   });
 
   describe('traversal function', () => {
@@ -106,11 +110,17 @@ describe('forEachDescriptor', () => {
     it('iterates variations', () => {
       const a = jest.fn();
       const b = jest.fn();
-      const variationPathA = 'path/to/a';
-      const variationPathB = 'path/to/b';
+      const variationPathA = `${projectRoot}/path/to/a`;
+      const variationPathB = `${projectRoot}/path/to/b`;
       mockVariations = {
-        [variationPathA]: a,
-        [variationPathB]: b,
+        [variationPathA]: {
+          Module: interopRequireDefault(a),
+          actualPath: `${variationPathA}.extA`,
+        },
+        [variationPathB]: {
+          Module: interopRequireDefault(b),
+          actualPath: `${variationPathB}.extB`,
+        },
       };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getExtras,
@@ -147,12 +157,30 @@ describe('forEachDescriptor', () => {
 
       expect(callback).toHaveBeenCalledTimes(2);
       const [first, second] = callback.mock.calls;
-      expect(first).toEqual([descriptor, { variationPath: variationPathA }]);
-      expect(second).toEqual([descriptor, { variationPath: variationPathB }]);
+      expect(first).toEqual([descriptor, {
+        variationProvider: {
+          hierarchy: 'path/to/a',
+          path: variationPathA,
+          resolvedPath: mockVariations[variationPathA].actualPath
+        },
+        variationPath: variationPathA,
+      }]);
+      expect(second).toEqual([descriptor, {
+        variationProvider: {
+          hierarchy: 'path/to/b',
+          path: variationPathB,
+          resolvedPath: mockVariations[variationPathB].actualPath
+        },
+        variationPath: variationPathB,
+      }]);
     });
 
     it('throws when the provider is not a function', () => {
-      mockVariations = { 'path/to/a': true };
+      mockVariations = {
+        'path/to/a': {
+          Module: interopRequireDefault(true),
+        },
+      };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getExtras,
         getDescriptor,
@@ -165,7 +193,12 @@ describe('forEachDescriptor', () => {
 
     it('provides a default `getExtras`', () => {
       const a = jest.fn();
-      mockVariations = { 'path/to/a': a };
+      mockVariations = {
+        'path/to/a': {
+          Module: interopRequireDefault(a),
+          actualPath: 'path/to/a.extension',
+        },
+      };
       const traverse = forEachDescriptor(mockProjectConfig, {
         getDescriptor,
         projectRoot,

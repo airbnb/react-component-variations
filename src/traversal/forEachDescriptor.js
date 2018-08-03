@@ -1,9 +1,15 @@
 import entries from 'object.entries';
+import path from 'path';
+import has from 'has';
 
 import validateProject from '../helpers/validateProject';
 import getComponents from '../helpers/getComponents';
 import getVariationProviders from '../helpers/getVariationProviders';
 import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
+
+function stripExtension(actualPath) {
+  return path.join(path.dirname(actualPath), path.basename(actualPath, path.extname(actualPath)));
+}
 
 export default function forEachDescriptor(
   projectConfig,
@@ -20,7 +26,7 @@ export default function forEachDescriptor(
   }
 
   const Components = getComponents(projectConfig, projectRoot);
-  const variations = getVariationProviders(projectConfig, projectRoot);
+  const variations = getVariationProviders(projectConfig, projectRoot, { fileMapOnly: true });
 
   if (Object.keys(Components).length === 0) {
     throw new RangeError('Zero components found');
@@ -29,14 +35,21 @@ export default function forEachDescriptor(
     throw new RangeError('Zero variations found');
   }
 
+  const {
+    variationsRoot,
+  } = projectConfig;
+  const actualRoot = variationsRoot ? path.join(projectRoot, variationsRoot) : projectRoot;
+
   return function traverseVariationDescriptors(callback) {
     if (typeof callback !== 'function' || callback.length < 1 || callback.length > 2) {
       throw new TypeError('a callback that accepts exactly 1 or 2 arguments is required');
     }
-    entries(variations).forEach(([path, provider]) => {
+    entries(variations).forEach(([filePath, { actualPath, Module }]) => {
+      const provider = has(Module, 'default') ? Module.default : Module;
       if (typeof provider !== 'function') {
-        throw new TypeError(`“${path}” does not export default a function; got ${typeof provider}`);
+        throw new TypeError(`“${filePath}” does not export default a function; got ${typeof provider}`);
       }
+      const hierarchy = path.relative(actualRoot, stripExtension(actualPath));
       const descriptor = getDescriptor(provider, {
         Components,
         variations,
@@ -44,7 +57,15 @@ export default function forEachDescriptor(
         projectConfig,
       });
       callback(descriptor, {
-        variationPath: path,
+        variationProvider: {
+          path: filePath,
+          resolvedPath: actualPath,
+          hierarchy,
+        },
+        get variationPath() {
+          console.warn('this property is deprecated in favor of the `variationProvider` object’s `path` property');
+          return filePath;
+        },
       });
     });
   };
