@@ -124,8 +124,8 @@ describe('forEachDescriptor', () => {
         variations: './to/variations/**',
       };
 
-      const variationPathA = `${projectRoot}/${variationsRoot}/path/to/a`;
-      const variationPathB = `${projectRoot}/${variationsRoot}/path/to/b`;
+      const variationPathA = `${projectRoot}/${variationsRoot}path/to/a`;
+      const variationPathB = `${projectRoot}/${variationsRoot}path/to/b`;
 
       mockVariations = {
         [variationPathA]: {

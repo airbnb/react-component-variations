@@ -12,7 +12,7 @@ function stripExtension(actualPath) {
 }
 
 function stripMatchingPrefix(prefix, toStrip) {
-  return stripExtension(toStrip.startsWith(prefix) ? toStrip.slice(prefix.length + 1) : toStrip);
+  return stripExtension(toStrip.startsWith(prefix) ? toStrip.slice(prefix.length) : toStrip);
 }
 
 export default function forEachDescriptor(
