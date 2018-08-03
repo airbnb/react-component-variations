@@ -6,14 +6,7 @@ import validateProject from '../helpers/validateProject';
 import getComponents from '../helpers/getComponents';
 import getVariationProviders from '../helpers/getVariationProviders';
 import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
-
-function stripExtension(actualPath) {
-  return path.join(path.dirname(actualPath), path.basename(actualPath, path.extname(actualPath)));
-}
-
-function stripMatchingPrefix(prefix, toStrip) {
-  return stripExtension(toStrip.startsWith(prefix) ? toStrip.slice(prefix.length) : toStrip);
-}
+import stripMatchingPrefix from '../helpers/stripMatchingPrefix';
 
 export default function forEachDescriptor(
   projectConfig,
