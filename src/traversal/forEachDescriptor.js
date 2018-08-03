@@ -11,6 +11,10 @@ function stripExtension(actualPath) {
   return path.join(path.dirname(actualPath), path.basename(actualPath, path.extname(actualPath)));
 }
 
+function stripMatchingPrefix(prefix, toStrip) {
+  return stripExtension(toStrip.startsWith(prefix) ? toStrip.slice(prefix.length + 1) : toStrip);
+}
+
 export default function forEachDescriptor(
   projectConfig,
   {
@@ -49,7 +53,7 @@ export default function forEachDescriptor(
       if (typeof provider !== 'function') {
         throw new TypeError(`“${filePath}” does not export default a function; got ${typeof provider}`);
       }
-      const hierarchy = path.relative(actualRoot, stripExtension(actualPath));
+      const hierarchy = stripMatchingPrefix(actualRoot, actualPath);
       const descriptor = getDescriptor(provider, {
         Components,
         variations,

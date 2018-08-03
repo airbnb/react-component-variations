@@ -18,6 +18,10 @@ describe('forEachDescriptor', () => {
         Module: interopRequireDefault(jest.fn()),
         actualPath: '/full/path/to/VariationProvider.jsx',
       },
+      'path/to/another/VariationProvider': {
+        Module: jest.fn(),
+        actualPath: '/full/path/to/another/VariationProvider.jsx',
+      },
     };
   });
 
@@ -110,8 +114,19 @@ describe('forEachDescriptor', () => {
     it('iterates variations', () => {
       const a = jest.fn();
       const b = jest.fn();
-      const variationPathA = `${projectRoot}/path/to/a`;
-      const variationPathB = `${projectRoot}/path/to/b`;
+
+      const variationsRoot = 'glob/variations/path/';
+      const componentsRoot = 'glob/components/path/';
+      const mockProjectConfigWithRoots = {
+        componentsRoot,
+        components: './to/components/**',
+        variationsRoot,
+        variations: './to/variations/**',
+      };
+
+      const variationPathA = `${projectRoot}/${variationsRoot}/path/to/a`;
+      const variationPathB = `${projectRoot}/${variationsRoot}/path/to/b`;
+
       mockVariations = {
         [variationPathA]: {
           Module: interopRequireDefault(a),
@@ -122,7 +137,7 @@ describe('forEachDescriptor', () => {
           actualPath: `${variationPathB}.extB`,
         },
       };
-      const traverse = forEachDescriptor(mockProjectConfig, {
+      const traverse = forEachDescriptor(mockProjectConfigWithRoots, {
         getExtras,
         getDescriptor,
         projectRoot,
@@ -139,7 +154,7 @@ describe('forEachDescriptor', () => {
       expect(firstDescriptorArgs).toEqual([
         a,
         expect.objectContaining({
-          projectConfig: mockProjectConfig,
+          projectConfig: mockProjectConfigWithRoots,
           Components,
           variations,
           getExtras,
@@ -148,7 +163,7 @@ describe('forEachDescriptor', () => {
       expect(secondDescriptorArgs).toEqual([
         b,
         expect.objectContaining({
-          projectConfig: mockProjectConfig,
+          projectConfig: mockProjectConfigWithRoots,
           Components,
           variations,
           getExtras,
