@@ -34,8 +34,16 @@ export default function forEachProjectVariation(consumer, {
       forEachDescriptor(
         projectConfig,
         { getExtras, getDescriptor, projectRoot },
-      )((descriptor) => {
-        forEachVariation({ projectName, ...descriptor }, consumer, callback);
+      )((descriptor, { variationProvider }) => {
+        forEachVariation(
+          {
+            projectName,
+            variationProvider,
+            ...descriptor,
+          },
+          consumer,
+          callback,
+        );
       });
     });
   };

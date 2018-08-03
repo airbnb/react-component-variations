@@ -1,5 +1,4 @@
-import interopRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
-global.interopRequireDefault = interopRequireDefault;
+import mockInteropRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
 
 import forEachProjectVariation from '../../src/traversal/forEachProjectVariation';
 
@@ -13,7 +12,14 @@ const mockProjectConfig = {
 const mockProjectName = 'some awesome project';
 const mockProjectName2 = 'a better project';
 
-const mockDescriptor = {};
+const mockDescriptor = {
+  a: 'b',
+  c: 'd',
+};
+
+const mockVariationPath = 'glob/path/to/RealVariationProvider';
+const mockVariationHierarchy = 'path/to/RealVariationProvider';
+const mockVariationActualPath = `${mockVariationHierarchy}.js`;
 
 const consumer = 'cookie monster';
 
@@ -21,9 +27,9 @@ jest.mock('../../src/helpers/getComponents', () => jest.fn(() => ({
   'path/to/component': { actualPath: 'path/to/component.js', Module: {} },
 })));
 jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => ({
-  'path/to/VariationProvider': {
-    actualPath: 'path/to/RealVariationProvider.js',
-    Module: global.interopRequireDefault(jest.fn(() => mockDescriptor)),
+  [mockVariationPath]: {
+    actualPath: mockVariationActualPath,
+    Module: mockInteropRequireDefault(jest.fn(() => mockDescriptor)),
   },
 })));
 
@@ -75,7 +81,19 @@ describe('forEachProjectVariation', () => {
     const { calls } = forEachVariation.mock;
 
     calls.forEach((args, idx) => {
-      expect(args).toEqual([{ projectName: mockProjectNames[idx], ...mockDescriptor }, consumer, callback]);
+      expect(args).toEqual([
+        expect.objectContaining({
+          projectName: mockProjectNames[idx],
+          ...mockDescriptor,
+          variationProvider: expect.objectContaining({
+            path: mockVariationPath,
+            resolvedPath: mockVariationActualPath,
+            hierarchy: mockVariationHierarchy,
+          }),
+        }),
+        consumer,
+        callback,
+      ]);
     });
   });
 });
