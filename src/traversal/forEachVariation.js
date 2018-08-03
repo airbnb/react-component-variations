@@ -9,6 +9,7 @@ export default function forEachVariation(descriptor, consumer, callback) {
   const {
     component,
     projectName,
+    variationProvider,
     createdAt: rootCreatedAt,
     usage,
     options: allRootConsumerOptions = {},
@@ -47,6 +48,7 @@ export default function forEachVariation(descriptor, consumer, callback) {
 
     const newVariation = {
       componentName,
+      variationProvider,
       projectName,
       title,
       component,

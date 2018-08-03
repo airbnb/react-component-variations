@@ -48,7 +48,6 @@ describe('forEachVariation', () => {
         rootOptions: mockDescriptor.options,
       };
       delete expectedDescriptor.variations;
-      delete expectedDescriptor.variationProvider;
 
       const callback = jest.fn((newVariation) => {
         expect(newVariation).toEqual(expectedDescriptor);
