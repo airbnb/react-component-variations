@@ -1,12 +1,27 @@
 import forEachVariation from '../../src/traversal/forEachVariation';
 
+const mockVariation = {
+  title: 'hi',
+  render() {},
+};
+
+const consumer = 'foo';
+
 const mockDescriptor = {
   component: 'mock-component',
   projectName: 'mock-project',
   createdAt: 'timestamp',
   usage: 'mock-usage',
   metadata: { foo: 'bar' },
-  variations: [],
+  variations: [mockVariation],
+  variationProvider: {
+    path: 'a/b/c',
+  },
+  options: {
+    [consumer]: {
+      a: 'b',
+    },
+  },
 };
 
 describe('forEachVariation', () => {
@@ -14,17 +29,32 @@ describe('forEachVariation', () => {
     expect(typeof forEachVariation).toBe('function');
   });
 
+  it('throws with an invalid callback', () => {
+    [true, false, [], {}, '', 'a', 42, null, undefined].forEach((nonFunction) => {
+      expect(() => forEachVariation(mockDescriptor, consumer, nonFunction)).toThrow(TypeError);
+    });
+
+    expect(() => forEachVariation(mockDescriptor, consumer, () => {})).toThrow(TypeError);
+    expect(() => forEachVariation(mockDescriptor, consumer, (a, b) => {})).toThrow(TypeError);
+  });
+
   describe('callback function', () => {
     it('passes in the correct mockDescriptor data', () => {
-      const callback = (newVariation) => {
-        Object.keys(mockDescriptor).forEach((property) => {
-          if (property === 'variations') {
-            return;
-          }
-          expect(mockDescriptor[property]).toEqual(newVariation[property]);
-        });
+      const expectedDescriptor = {
+        ...mockDescriptor,
+        ...mockVariation,
+        componentName: mockDescriptor.component,
+        options: mockDescriptor.options[consumer],
+        rootOptions: mockDescriptor.options,
       };
-      forEachVariation(mockDescriptor, {}, callback);
+      delete expectedDescriptor.variations;
+      delete expectedDescriptor.variationProvider;
+
+      const callback = jest.fn((newVariation) => {
+        expect(newVariation).toEqual(expectedDescriptor);
+      });
+      forEachVariation(mockDescriptor, consumer, callback);
+      expect(callback).toHaveBeenCalledTimes(1);
     });
   });
 });

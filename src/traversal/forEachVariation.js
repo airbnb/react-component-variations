@@ -2,7 +2,7 @@ import entries from 'object.entries';
 import getComponentName from 'airbnb-prop-types/build/helpers/getComponentName';
 
 export default function forEachVariation(descriptor, consumer, callback) {
-  if (typeof callback !== 'function' && callback.length !== 1) {
+  if (typeof callback !== 'function' || callback.length !== 1) {
     throw new TypeError('a callback that accepts exactly 1 argument is required');
   }
 
