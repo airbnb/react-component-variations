@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import has from 'has';
 
 import getComponents from '../helpers/getComponents';
+import getVariationProviders from '../helpers/getVariationProviders';
 import getValidationErrors from '../helpers/getValidationErrors';
-import globToFiles from '../helpers/globToFiles';
 import requireFiles from '../helpers/requireFiles';
 import forEachProject from '../traversal/forEachProject';
 import validateProjects from '../helpers/validateProjects';
@@ -11,7 +11,7 @@ import validateProject from '../helpers/validateProject';
 import normalizeConfig from '../helpers/normalizeConfig';
 
 function getOverallErrors({
-  variations = [],
+  variations = {},
   components = {},
   log,
   warn,
@@ -19,7 +19,8 @@ function getOverallErrors({
   projectConfig,
   projectRoot,
 }) {
-  if (variations.length === 0) {
+  const variationCount = Object.keys(variations).length;
+  if (variationCount === 0) {
     error(chalk.red(chalk.bold('No Variation Providers found.')));
     return 1;
   }
@@ -31,9 +32,9 @@ function getOverallErrors({
   }
 
   log(chalk.blue(`${chalk.bold(componentCount)} Components found...`));
-  log(chalk.green(`${chalk.bold(variations.length)} Variation Providers found...`));
+  log(chalk.green(`${chalk.bold(variationCount)} Variation Providers found...`));
 
-  if (componentCount < variations.length) {
+  if (componentCount < variationCount) {
     error(chalk.red(chalk.bold('Found fewer Components than Variation Providers.')));
     return 1;
   }
@@ -83,7 +84,6 @@ export const handler = (config) => {
 
   forEachProject(projects, projectNames, (project, projectConfig) => {
     const {
-      variations,
       require: requires,
     } = projectConfig;
     const log = x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`);
@@ -93,7 +93,7 @@ export const handler = (config) => {
     // the purpose of the try/catch here is so that when an error is encountered, we can continue showing useful output rather than terminating the process.
     try {
       const exitCode = getOverallErrors({
-        variations: globToFiles(variations),
+        variations: getVariationProviders(projectConfig, projectRoot, { fileMapOnly: true }),
         components: getComponents(projectConfig, projectRoot, { fileMapOnly: true }),
         log,
         warn: x => console.warn(`${chalk.inverse(chalk.yellow(`Project “${project}”`))}: ${x}`),

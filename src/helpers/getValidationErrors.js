@@ -1,5 +1,6 @@
-import path from 'path';
 import has from 'has';
+import values from 'object.values';
+
 import { validate } from 'jsonschema';
 import schema from '../schema.json';
 import getProjectExtras from './getProjectExtras';
@@ -105,19 +106,17 @@ export default function getValidationErrors(variations, {
   projectRoot,
 }) {
   const origError = console.error;
-  return variations.map((file) => {
+  return values(variations).map(({ actualPath, Module }) => {
     console.error = function throwError(msg) { throw new Error(msg); };
     try {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      const module = require(path.join(process.cwd(), file));
-      validateDescriptorProvider(file, module.default || module, {
+      validateDescriptorProvider(actualPath, has(Module, 'default') ? Module.default : Module, {
         projectConfig,
         projectRoot,
       });
       console.error = origError;
       return null;
     } catch (e) {
-      return formatMsg(file, e.message);
+      return formatMsg(actualPath, e.message);
     }
   }).filter(Boolean);
 }

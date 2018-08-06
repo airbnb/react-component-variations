@@ -12,7 +12,6 @@ export default function getVariationProviders(projectConfig, projectRoot, {
 } = {}) {
   validateProject(projectConfig);
 
-
   const {
     variations,
     variationsRoot,
