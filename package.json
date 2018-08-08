@@ -52,7 +52,6 @@
     "react": "*"
   },
   "jest": {
-    "testURL": "http://localhost",
     "collectCoverageFrom": [
       "src/**",
       "!**/*.json"
@@ -67,6 +66,7 @@
       "jsx",
       "json"
     ],
+    "testEnvironment": "node",
     "testRegex": "test/.*\\.jsx?$"
   }
 }
