@@ -4,6 +4,7 @@ import values from 'object.values';
 import { validate } from 'jsonschema';
 import schema from '../schema.json';
 import getProjectExtras from './getProjectExtras';
+import getDefaultOrModule from './getDefaultOrModule';
 
 function getProxy(mock) {
   const properties = [];
@@ -109,7 +110,7 @@ export default function getValidationErrors(variations, {
   return values(variations).map(({ actualPath, Module }) => {
     console.error = function throwError(msg) { throw new Error(msg); };
     try {
-      validateDescriptorProvider(actualPath, has(Module, 'default') ? Module.default : Module, {
+      validateDescriptorProvider(actualPath, getDefaultOrModule(Module), {
         projectConfig,
         projectRoot,
       });

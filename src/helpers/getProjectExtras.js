@@ -1,9 +1,9 @@
 import fromEntries from 'object.fromentries';
 import entries from 'object.entries';
-import has from 'has';
 
 import validateProject from './validateProject';
 import requireFile from './requireFile';
+import getDefaultOrModule from './getDefaultOrModule';
 
 export default function getProjectExtras({
   projectConfig,
@@ -16,7 +16,7 @@ export default function getProjectExtras({
 
   const projectExtraEntries = entries(extras).map(([key, filePath]) => {
     const { Module } = requireFile(filePath, { projectRoot, extensions });
-    return [key, has(Module, 'default') ? Module.default : Module];
+    return [key, getDefaultOrModule(Module)];
   });
 
   return {

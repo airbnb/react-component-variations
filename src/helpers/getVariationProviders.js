@@ -1,11 +1,11 @@
 import entries from 'object.entries';
 import fromEntries from 'object.fromentries';
-import has from 'has';
 import path from 'path';
 
 import validateProject from './validateProject';
 import globToFiles from './globToFiles';
 import requireFiles from './requireFiles';
+import getDefaultOrModule from './getDefaultOrModule';
 
 export default function getVariationProviders(projectConfig, projectRoot, {
   fileMapOnly = false,
@@ -27,6 +27,6 @@ export default function getVariationProviders(projectConfig, projectRoot, {
 
   return fromEntries(entries(fileMap).map(([requirePath, { Module }]) => [
     requirePath,
-    has(Module, 'default') ? Module.default : Module,
+    getDefaultOrModule(Module),
   ]));
 }

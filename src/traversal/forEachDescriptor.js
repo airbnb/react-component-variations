@@ -1,12 +1,12 @@
 import entries from 'object.entries';
 import path from 'path';
-import has from 'has';
 
 import validateProject from '../helpers/validateProject';
 import getComponents from '../helpers/getComponents';
 import getVariationProviders from '../helpers/getVariationProviders';
 import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
 import stripMatchingPrefix from '../helpers/stripMatchingPrefix';
+import getDefaultOrModule from '../helpers/getDefaultOrModule';
 
 export default function forEachDescriptor(
   projectConfig,
@@ -42,7 +42,7 @@ export default function forEachDescriptor(
       throw new TypeError('a callback that accepts exactly 1 or 2 arguments is required');
     }
     entries(variations).forEach(([filePath, { actualPath, Module }]) => {
-      const provider = has(Module, 'default') ? Module.default : Module;
+      const provider = getDefaultOrModule(Module);
       if (typeof provider !== 'function') {
         throw new TypeError(`“${filePath}” does not export default a function; got ${typeof provider}`);
       }

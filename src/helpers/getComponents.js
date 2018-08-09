@@ -1,11 +1,11 @@
 import values from 'object.values';
-import has from 'has';
 import path from 'path';
 
 import validateProject from './validateProject';
 import globToFiles from './globToFiles';
 import requireFiles from './requireFiles';
 import addComponentAliases from './addComponentAliases';
+import getDefaultOrModule from './getDefaultOrModule';
 
 function stripRoot(filePath, projectRoot) {
   return filePath.startsWith(projectRoot)
@@ -38,7 +38,7 @@ export default function getComponents(projectConfig, projectRoot, {
   ) => addComponentAliases(
     Components,
     stripRoot(actualPath, actualRoot),
-    has(Module, 'default') ? Module.default : Module,
+    getDefaultOrModule(Module),
     flattenComponentTree,
   ), {});
 }
