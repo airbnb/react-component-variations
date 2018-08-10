@@ -22,6 +22,8 @@
   "license": "MIT",
   "dependencies": {
     "airbnb-prop-types": "^2.10.0",
+    "array.prototype.find": "^2.0.4",
+    "array.prototype.flatmap": "^1.2.1",
     "babel-runtime": "^6.26.0",
     "chalk": "^2.4.1",
     "find-up": "^3.0.0",
