@@ -41,13 +41,8 @@ function ExtraMock(extra, property) {
   return getProxy.call(this, getStaticProperty);
 }
 function ExtrasMock(extra, {
-  projectConfig,
-  projectRoot,
+  projectExtras,
 }) {
-  const projectExtras = getProjectExtras({
-    projectConfig,
-    projectRoot,
-  });
   return getProxy(property => (
     has(projectExtras, property) ? projectExtras[property] : new ExtraMock(extra, property)
   ));
@@ -70,10 +65,11 @@ function validateDescriptorProvider(file, provider, {
   }
 
   const Components = getProxy(name => (name.endsWith('/') ? Components : new ComponentMock(name)));
-  const Extras = getProxy(extra => new ExtrasMock(extra, {
+  const projectExtras = getProjectExtras({
     projectConfig,
     projectRoot,
-  }));
+  });
+  const Extras = getProxy(extra => new ExtrasMock(extra, { projectExtras }));
 
   const descriptor = provider(Components, Extras);
 
