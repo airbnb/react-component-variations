@@ -45,9 +45,10 @@ export const handler = (config) => {
   const {
     projects,
     require: requires,
+    requireInteropWrapper,
   } = getProjectRootConfig(projectRoot);
 
-  if (requires) { requireFiles(requires); }
+  if (requires) { requireFiles(requires, { requireInteropWrapper }); }
 
   forEachProject(projects, projectNames, (projectName, projectConfig) => {
     const { variationsRoot } = projectConfig;

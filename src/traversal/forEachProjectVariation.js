@@ -16,9 +16,10 @@ export default function forEachProjectVariation(consumer, {
   const {
     projects,
     require: requires,
+    requireInteropWrapper,
   } = getProjectRootConfig(projectRoot);
 
-  if (requires) { requireFiles(requires); }
+  if (requires) { requireFiles(requires, { requireInteropWrapper }); }
 
   const allProjectNames = Object.keys(projects);
   const filteredProjectNames = [].concat(selectProjectNames(allProjectNames));

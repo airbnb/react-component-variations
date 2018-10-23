@@ -16,10 +16,15 @@ export default function getVariationProviders(projectConfig, projectRoot, {
     variations,
     variationsRoot,
     extensions,
+    requireInteropWrapper,
   } = projectConfig;
   const actualRoot = variationsRoot ? path.join(projectRoot, variationsRoot) : projectRoot;
   const files = globToFiles(variations, actualRoot);
-  const fileMap = requireFiles(files, { projectRoot: actualRoot, extensions });
+  const fileMap = requireFiles(files, {
+    projectRoot: actualRoot,
+    extensions,
+    requireInteropWrapper,
+  });
 
   if (fileMapOnly) {
     return fileMap;

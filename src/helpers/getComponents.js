@@ -23,10 +23,15 @@ export default function getComponents(projectConfig, projectRoot, {
     componentsRoot,
     extensions,
     flattenComponentTree,
+    requireInteropWrapper,
   } = projectConfig;
   const actualRoot = componentsRoot ? path.join(projectRoot, componentsRoot) : projectRoot;
   const files = globToFiles(components, actualRoot);
-  const fileMap = requireFiles(files, { projectRoot: actualRoot, extensions });
+  const fileMap = requireFiles(files, {
+    projectRoot: actualRoot,
+    extensions,
+    requireInteropWrapper,
+  });
 
   if (fileMapOnly) {
     return fileMap;
