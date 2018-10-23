@@ -85,11 +85,12 @@ export const handler = (config) => {
   forEachProject(projects, projectNames, (project, projectConfig) => {
     const {
       require: requires,
+      requireInteropWrapper,
     } = projectConfig;
     const log = x => console.log(`${chalk.inverse(chalk.blue(`Project “${project}”`))}: ${x}`);
     log(chalk.yellow('validating...'));
 
-    if (requires) { requireFiles(requires); }
+    if (requires) { requireFiles(requires, { requireInteropWrapper }); }
     // the purpose of the try/catch here is so that when an error is encountered, we can continue showing useful output rather than terminating the process.
     try {
       const exitCode = getOverallErrors({

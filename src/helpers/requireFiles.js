@@ -4,6 +4,7 @@ import requireFile from './requireFile';
 
 export default function requireFiles(arg, {
   projectRoot = process.cwd(),
+  requireInteropWrapper,
   extensions = undefined,
 } = {}) {
   if (arg && !Array.isArray(arg) && typeof arg === 'object') {
@@ -12,7 +13,7 @@ export default function requireFiles(arg, {
 
   const entries = [].concat(arg).map(requirePath => [
     requirePath,
-    requireFile(requirePath, { projectRoot, extensions }),
+    requireFile(requirePath, { projectRoot, requireInteropWrapper, extensions }),
   ]);
 
   return fromEntries(entries);

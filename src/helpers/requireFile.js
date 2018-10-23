@@ -1,5 +1,5 @@
 import resolve from 'resolve';
-import interopRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
+import interopRequireDefault from './interopRequireDefault';
 
 const defaultExtensionKeys = Object.keys(require.extensions);
 const defaultExtensions = defaultExtensionKeys.length > 0 ? defaultExtensionKeys : ['.js', '.jsx'];
@@ -7,10 +7,11 @@ const defaultExtensions = defaultExtensionKeys.length > 0 ? defaultExtensionKeys
 export default function requireFile(requirePath, {
   extensions = defaultExtensions,
   projectRoot = process.cwd(),
+  requireInteropWrapper = interopRequireDefault,
 }) {
   const actualPath = resolve.sync(requirePath, { basedir: projectRoot, extensions });
   // eslint-disable-next-line global-require, import/no-dynamic-require
-  const Module = interopRequireDefault(require(actualPath));
+  const Module = requireInteropWrapper(require(actualPath));
 
   return { actualPath, Module };
 }

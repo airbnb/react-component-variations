@@ -1,4 +1,4 @@
-import mockInteropRequireDefault from 'babel-runtime/helpers/interopRequireDefault';
+import mockInteropRequireDefault from '../../src/helpers/interopRequireDefault';
 
 import forEachProjectVariation from '../../src/traversal/forEachProjectVariation';
 
