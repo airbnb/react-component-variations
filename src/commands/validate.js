@@ -78,7 +78,7 @@ export const builder = (yargs) => {
 
 export const handler = (config) => {
   const projectRoot = process.cwd();
-  const { projects, projectNames } = normalizeConfig(config);
+  const { projects, projectNames } = normalizeConfig(config, { projectRoot });
 
   const exitCodes = [];
 

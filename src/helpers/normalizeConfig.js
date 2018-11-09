@@ -13,7 +13,9 @@ export default function normalizeConfig({
   _,
   /* ^ these were provided by yargs */
   ...config
-}) {
+}, {
+  projectRoot = process.cwd(),
+} = {}) {
   if (all) {
     const { project, ...rest } = config;
     return { ...rest, projectNames: Object.keys(config.projects) };
