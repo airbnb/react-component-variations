@@ -8,10 +8,16 @@ export default function requireFile(requirePath, {
   extensions = defaultExtensions,
   projectRoot = process.cwd(),
   requireInteropWrapper = interopRequireDefault,
+  lazyRequire = false,
 }) {
-  const actualPath = resolve.sync(requirePath, { basedir: projectRoot, extensions });
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  const Module = requireInteropWrapper(require(actualPath));
+  const getModule = () => {
+    const actualPath = resolve.sync(requirePath, { basedir: projectRoot, extensions });
+    return {
+      actualPath,
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      Module: requireInteropWrapper(require(actualPath)),
+    };
+  };
 
-  return { actualPath, Module };
+  return lazyRequire ? getModule : getModule();
 }
