@@ -17,7 +17,11 @@ export default function forEachProjectVariation(consumer, {
     projects,
     require: requires,
     requireInteropWrapper,
+    renderWrapper: rootRenderWrapper,
   } = getProjectRootConfig(projectRoot);
+  if (rootRenderWrapper && typeof rootRenderWrapper !== 'function') {
+    throw new TypeError(`"renderWrapper" in the project root config, if provided, must resolve to a module that exports a function. Got: ${typeof rootRenderWrapper}`);
+  }
 
   if (requires) { requireFiles(requires, { requireInteropWrapper }); }
 
@@ -32,6 +36,13 @@ export default function forEachProjectVariation(consumer, {
     }
 
     forEachProject(projects, filteredProjectNames, (projectName, projectConfig) => {
+      const { renderWrapper: projectRenderWrapper } = projectConfig;
+      if (projectRenderWrapper && typeof projectRenderWrapper !== 'function') {
+        throw new TypeError(`"renderWrapper" in the project config “${projectName}”, if provided, must resolve to a module that exports a function.`);
+      }
+
+      const renderWrapper = projectRenderWrapper || rootRenderWrapper;
+
       forEachDescriptor(
         projectConfig,
         { getExtras, getDescriptor, projectRoot },
@@ -41,6 +52,7 @@ export default function forEachProjectVariation(consumer, {
             projectName,
             variationProvider,
             ...descriptor,
+            ...(renderWrapper && { renderWrapper }),
           },
           consumer,
           callback,

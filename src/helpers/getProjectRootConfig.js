@@ -23,7 +23,10 @@ export default function getProjectRootConfig(projectRoot = process.cwd(), config
       requireInteropWrapper: interopRequireDefault,
     });
 
-    return normalizeConfig({ ...config, requireInteropWrapper }, { projectRoot });
+    return normalizeConfig({ ...config, requireInteropWrapper }, {
+      projectRoot,
+      requireInteropWrapper,
+    });
   }
 
   return normalizeConfig(config, { projectRoot });

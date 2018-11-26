@@ -15,6 +15,7 @@ export default function forEachVariation(descriptor, consumer, callback) {
     options: allRootConsumerOptions = {},
     metadata = {},
     variations,
+    renderWrapper = render => render(),
   } = descriptor;
 
   const { [consumer]: rootConsumerOptions = {} } = allRootConsumerOptions || {};
@@ -46,6 +47,10 @@ export default function forEachVariation(descriptor, consumer, callback) {
     const options = { ...rootConsumerOptions, ...variationOptions };
     const createdAt = variationCreatedAt || rootCreatedAt;
 
+    if (renderWrapper && typeof renderWrapper !== 'function') {
+      throw new TypeError('"renderWrapper", if provided, must be a function');
+    }
+
     const newVariation = {
       componentName,
       variationProvider,
@@ -59,7 +64,8 @@ export default function forEachVariation(descriptor, consumer, callback) {
       ...variation,
       options, // eslint-disable-line no-dupe-keys
       metadata,
-      render,
+      originalRender: render,
+      render: () => renderWrapper(render, metadata),
     };
     callback(newVariation);
   });

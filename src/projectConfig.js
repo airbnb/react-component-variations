@@ -22,6 +22,14 @@ export default {
         extensions: { $ref: '#/definitions/extensions' },
         flattenComponentTree: { type: 'boolean' },
         extras: { $ref: '#/definitions/extras' },
+        renderWrapper: {
+          oneOf: [{
+            type: 'string',
+            minLength: 1,
+          }, {
+            type: 'function',
+          }]
+        },
       },
       required: ['components', 'variations'],
       additionalProperties: false,
