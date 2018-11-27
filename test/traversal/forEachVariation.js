@@ -1,8 +1,10 @@
 import forEachVariation from '../../src/traversal/forEachVariation';
 
+const mockRender = function render() {};
 const mockVariation = {
   title: 'hi',
-  render() {},
+  render: mockRender,
+  originalRender: mockRender,
 };
 
 const consumer = 'foo';
@@ -46,11 +48,12 @@ describe('forEachVariation', () => {
         componentName: mockDescriptor.component,
         options: mockDescriptor.options[consumer],
         rootOptions: mockDescriptor.options,
+        render: expect.any(Function),
       };
       delete expectedDescriptor.variations;
 
       const callback = jest.fn((newVariation) => {
-        expect(newVariation).toEqual(expectedDescriptor);
+        expect(newVariation).toMatchObject(expectedDescriptor);
       });
       forEachVariation(mockDescriptor, consumer, callback);
       expect(callback).toHaveBeenCalledTimes(1);

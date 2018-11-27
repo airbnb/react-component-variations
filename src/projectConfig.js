@@ -28,7 +28,7 @@ export default {
             minLength: 1,
           }, {
             type: 'function',
-          }]
+          }],
         },
       },
       required: ['components', 'variations'],
