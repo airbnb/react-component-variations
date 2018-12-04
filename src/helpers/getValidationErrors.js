@@ -43,8 +43,8 @@ function ExtraMock(extra, property) {
 function ExtrasMock(extra, {
   projectExtras,
 }) {
-  return getProxy(property => (
-    has(projectExtras, property) ? projectExtras[property] : new ExtraMock(extra, property)
+  return getProxy.call(projectExtras[extra], property => (
+    has(projectExtras[extra], property) ? projectExtras[extra][property] : new ExtraMock(extra, property)
   ));
 }
 
