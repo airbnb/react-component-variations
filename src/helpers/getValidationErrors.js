@@ -104,7 +104,7 @@ export default function getValidationErrors(variations, {
 }) {
   const origError = console.error;
   return values(variations).map(({ actualPath, Module }) => {
-    console.error = function throwError(msg) { throw new Error(msg); };
+    console.error = function throwError(msg) { throw new Error(`${actualPath}: “${msg}”`); };
     try {
       validateDescriptorProvider(actualPath, getDefaultOrModule(Module), {
         projectConfig,
