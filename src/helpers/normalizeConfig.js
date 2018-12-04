@@ -28,10 +28,10 @@ function normalizeExtras({ extras }, projectConfig) {
   };
 }
 
-function normalizeProjects(rootConfig, projects, metadata) {
+function normalizeProjects(rootConfig, projects, extraData) {
   return fromEntries(entries(projects).map(([name, projectConfig]) => [
     name,
-    normalizeExtras(rootConfig, normalizeProjectConfig(projectConfig, metadata)),
+    normalizeExtras(rootConfig, normalizeProjectConfig(projectConfig, extraData)),
   ]));
 }
 
