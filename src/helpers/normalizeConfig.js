@@ -18,6 +18,23 @@ function normalizeProjectConfig(config, {
   return c;
 }
 
+function normalizeExtras({ extras }, projectConfig) {
+  return {
+    ...projectConfig,
+    extras: {
+      ...extras,
+      ...projectConfig.extras,
+    },
+  };
+}
+
+function normalizeProjects(rootConfig, projects, metadata) {
+  return fromEntries(entries(projects).map(([name, projectConfig]) => [
+    name,
+    normalizeExtras(rootConfig, normalizeProjectConfig(projectConfig, metadata)),
+  ]));
+}
+
 export default function normalizeConfig({
   all,
   /* these are provided by yargs */
@@ -31,11 +48,19 @@ export default function normalizeConfig({
 }, extraData = {}) {
   if (all) {
     const { project, ...rest } = config;
-    return { ...normalizeProjectConfig(rest, extraData), projectNames: Object.keys(config.projects) };
+    return {
+      ...normalizeProjectConfig(rest, extraData),
+      projects: normalizeProjects(rest, config.projects, extraData),
+      projectNames: Object.keys(config.projects),
+    };
   }
   if (config.project) {
     const { project, ...rest } = config;
-    return { ...normalizeProjectConfig(rest, extraData), projectNames: [project] };
+    return {
+      ...normalizeProjectConfig(rest, extraData),
+      projects: normalizeProjects(config, config.projects, extraData),
+      projectNames: [project],
+    };
   }
   if (!config.projects) {
     const { project: ___, projects, ...rest } = config;
@@ -44,9 +69,9 @@ export default function normalizeConfig({
     const project = packageName || 'root';
     return {
       ...rest,
-      projects: {
+      projects: normalizeProjects(config, {
         [project]: normalizeProjectConfig(rest, extraData),
-      },
+      }, extraData),
       projectNames: [project],
     };
   }
@@ -56,12 +81,6 @@ export default function normalizeConfig({
     ...normalizeProjectConfig(rest),
     extras,
     projectNames: Object.keys(config.projects),
-    projects: fromEntries(entries(config.projects).map(([projectName, projectConfig]) => [projectName, {
-      ...normalizeProjectConfig(projectConfig, extraData),
-      extras: {
-        ...projectConfig.extras,
-        ...extras,
-      },
-    }])),
+    projects: normalizeProjects(config, config.projects, extraData),
   };
 }
