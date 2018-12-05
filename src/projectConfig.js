@@ -22,6 +22,7 @@ export default {
         extensions: { $ref: '#/definitions/extensions' },
         flattenComponentTree: { type: 'boolean' },
         extras: { $ref: '#/definitions/extras' },
+        metadata: { $ref: '#/definitions/metadata' },
         renderWrapper: {
           oneOf: [{
             type: 'string',
@@ -82,6 +83,11 @@ export default {
       pattern: '^\\..+$',
     },
     extras: {
+      type: 'object',
+      properties: {},
+      additionalProperties: { $ref: '#/definitions/requiredFile' },
+    },
+    metadata: {
       type: 'object',
       properties: {},
       additionalProperties: { $ref: '#/definitions/requiredFile' },

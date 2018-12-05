@@ -7,6 +7,7 @@ import getVariationProviders from '../helpers/getVariationProviders';
 import getDescriptorFromProvider from '../helpers/getDescriptorFromProvider';
 import stripMatchingPrefix from '../helpers/stripMatchingPrefix';
 import getDefaultOrModule from '../helpers/getDefaultOrModule';
+import requirePropertyPaths from '../helpers/requirePropertyPaths';
 
 export default function forEachDescriptor(
   projectConfig,
@@ -34,7 +35,11 @@ export default function forEachDescriptor(
 
   const {
     variationsRoot,
+    metadata: projectMetadataPaths,
+    extensions,
   } = projectConfig;
+
+  const projectMetadata = requirePropertyPaths(projectMetadataPaths, { projectRoot, extensions });
   const actualRoot = variationsRoot ? path.join(projectRoot, variationsRoot) : projectRoot;
 
   return function traverseVariationDescriptors(callback) {
@@ -52,6 +57,7 @@ export default function forEachDescriptor(
         variations,
         getExtras,
         projectConfig,
+        projectMetadata,
       });
       callback(descriptor, {
         variationProvider: {

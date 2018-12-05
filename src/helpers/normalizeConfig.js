@@ -18,20 +18,23 @@ function normalizeProjectConfig(config, {
   return c;
 }
 
-function normalizeExtras({ extras }, projectConfig) {
-  return {
-    ...projectConfig,
-    extras: {
-      ...extras,
-      ...projectConfig.extras,
+function normalizeRequireableBags(rootConfig, projectConfig, propertyNames) {
+  return propertyNames.reduce((conf, name) => ({
+    ...conf,
+    [name]: {
+      ...rootConfig[name],
+      ...projectConfig[name],
     },
-  };
+  }), projectConfig);
 }
 
 function normalizeProjects(rootConfig, projects, extraData) {
   return fromEntries(entries(projects).map(([name, projectConfig]) => [
     name,
-    normalizeExtras(rootConfig, normalizeProjectConfig(projectConfig, extraData)),
+    normalizeRequireableBags(rootConfig, normalizeProjectConfig(projectConfig, extraData), [
+      'extras',
+      'metadata',
+    ]),
   ]));
 }
 
@@ -76,10 +79,9 @@ export default function normalizeConfig({
     };
   }
 
-  const { project, extras, ...rest } = config;
+  const { project, ...rest } = config;
   return {
     ...normalizeProjectConfig(rest),
-    extras,
     projectNames: Object.keys(config.projects),
     projects: normalizeProjects(config, config.projects, extraData),
   };
