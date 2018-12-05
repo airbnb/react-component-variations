@@ -16,6 +16,10 @@ const projectConfig = {
     b: 'some other file',
   },
 };
+const projectMetadata = {
+  a: 1,
+  b: 2,
+};
 
 describe('getDescriptorFromProvider', () => {
   beforeEach(() => {
@@ -27,7 +31,7 @@ describe('getDescriptorFromProvider', () => {
   });
 
   it('invokes the provided function with the right arguments', () => {
-    const provider = jest.fn();
+    const provider = jest.fn(() => ({}));
     const Components = {};
     const getExtras = jest.fn(() => ({ a: true }));
 
@@ -48,7 +52,7 @@ describe('getDescriptorFromProvider', () => {
   });
 
   it('provides a default getExtras', () => {
-    const provider = jest.fn();
+    const provider = jest.fn(() => ({}));
     const Components = {};
 
     getDescriptorFromProvider(provider, { Components, projectConfig });
@@ -60,9 +64,9 @@ describe('getDescriptorFromProvider', () => {
   });
 
   it('invokes the provided `getExtras`', () => {
-    const provider = jest.fn();
+    const provider = () => ({});
     const Components = { components: '' };
-    const getExtras = jest.fn();
+    const getExtras = () => {};
     const projectRoot = { root: '' };
     const getProjectExtras = require('../../src/helpers/getProjectExtras');
 
@@ -73,6 +77,51 @@ describe('getDescriptorFromProvider', () => {
       projectConfig,
       projectRoot,
       getExtras,
-    }))
+    }));
+  });
+
+  it('merges in projectMetadata when descriptor lacks metadata', () => {
+    const descriptor = { a: 1 };
+    const provider = () => descriptor;
+    const Components = { components: '' };
+    const getExtras = () => {};
+    const projectRoot = { root: '' };
+
+    const result = getDescriptorFromProvider(provider, {
+      Components,
+      projectConfig,
+      projectRoot,
+      projectMetadata,
+    });
+
+    expect(result).toMatchObject({
+      metadata: {
+        a: 1,
+        b: 2,
+      },
+    });
+  });
+
+  it('merges in projectMetadata when descriptor has metadata', () => {
+    const descriptor = { a: 1, metadata: { b: 3, c: 4 } };
+    const provider = () => descriptor;
+    const Components = { components: '' };
+    const getExtras = () => {};
+    const projectRoot = { root: '' };
+
+    const result = getDescriptorFromProvider(provider, {
+      Components,
+      projectConfig,
+      projectRoot,
+      projectMetadata,
+    });
+
+    expect(result).toMatchObject({
+      metadata: {
+        a: 1,
+        b: 3,
+        c: 4,
+      },
+    });
   });
 });
