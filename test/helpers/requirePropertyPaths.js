@@ -10,6 +10,15 @@ describe('requirePropertyPaths', () => {
     require('../../src/helpers/requireFile').mockClear();
   });
 
+  it('returns a falsy value directly', () => {
+    expect(requirePropertyPaths(undefined, {})).toEqual(undefined);
+    expect(requirePropertyPaths(null, {})).toEqual(null);
+    expect(requirePropertyPaths(false, {})).toEqual(false);
+    expect(requirePropertyPaths(0, {})).toEqual(0);
+    expect(requirePropertyPaths(NaN, {})).toEqual(NaN);
+    expect(requirePropertyPaths('', {})).toEqual('');
+  });
+
   it('returns an equivalent cloned object', () => {
     const obj = {};
     expect(requirePropertyPaths(obj, {})).not.toBe(obj);
