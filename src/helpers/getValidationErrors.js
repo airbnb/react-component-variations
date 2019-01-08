@@ -5,6 +5,7 @@ import { validate } from 'jsonschema';
 import schema from '../schema.json';
 import getProjectExtras from './getProjectExtras';
 import getDefaultOrModule from './getDefaultOrModule';
+import getComponents from './getComponents';
 
 function getProxy(mock) {
   const properties = [];
@@ -29,12 +30,6 @@ function getStaticProperty(p) {
   return undefined;
 }
 
-function ComponentMock(name) {
-  const C = () => null;
-  C.displayName = name;
-  Object.setPrototypeOf(C, ComponentMock.prototype);
-  return getProxy.call(C, getStaticProperty);
-}
 function ExtraMock(extra, property) {
   this.extra = extra;
   this.property = property;
@@ -53,6 +48,8 @@ function formatMsg(file, msg) {
 }
 
 function validateDescriptorProvider(file, provider, {
+  Components,
+  actualComponents,
   projectConfig,
   projectRoot,
 }) {
@@ -64,7 +61,6 @@ function validateDescriptorProvider(file, provider, {
     throw new RangeError(`provider function must take exactly 1 or 2 arguments: takes ${provider.length}`);
   }
 
-  const Components = getProxy(name => (name.endsWith('/') ? Components : new ComponentMock(name)));
   const projectExtras = getProjectExtras({
     projectConfig,
     projectRoot,
@@ -77,8 +73,8 @@ function validateDescriptorProvider(file, provider, {
     ? descriptor.component
     : [descriptor.component];
   components.forEach((component) => {
-    if (!(component instanceof ComponentMock)) {
-      throw new TypeError('descriptor must have a "component" property, with a value destructured from the first provider argument (or an array of them)');
+    if (!actualComponents.has(component)) {
+      throw new TypeError('descriptor must have a "component" property, with a value exported from one of the files in the "components" glob (or an array of them)');
     }
   });
 
@@ -99,14 +95,26 @@ function validateDescriptorProvider(file, provider, {
 }
 
 export default function getValidationErrors(variations, {
+  componentMap,
   projectConfig,
   projectRoot,
 }) {
   const origError = console.error;
+
+  const Components = getComponents(projectConfig, projectRoot);
+  Components.NO_COMPONENT = { toString() { return 'this is a temporary hack for providers with no component.' } };
+
+  const componentValues = values(componentMap)
+    .map(({ Module }) => getDefaultOrModule(Module))
+    .concat(Components.NO_COMPONENT);
+  const actualComponents = new Set(componentValues);
+
   return values(variations).map(({ actualPath, Module }) => {
     console.error = function throwError(msg) { throw new Error(`${actualPath}: “${msg}”`); };
     try {
       validateDescriptorProvider(actualPath, getDefaultOrModule(Module), {
+        Components,
+        actualComponents,
         projectConfig,
         projectRoot,
       });

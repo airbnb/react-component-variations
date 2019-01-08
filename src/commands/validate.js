@@ -40,6 +40,7 @@ function getOverallErrors({
   }
 
   const errors = getValidationErrors(variations, {
+    componentMap: components,
     projectConfig,
     projectRoot,
   });
