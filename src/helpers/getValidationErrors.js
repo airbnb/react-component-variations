@@ -6,6 +6,7 @@ import schema from '../schema.json';
 import getProjectExtras from './getProjectExtras';
 import getDefaultOrModule from './getDefaultOrModule';
 import getComponents from './getComponents';
+import NO_COMPONENT from '../NO_COMPONENT';
 
 function getProxy(mock) {
   const properties = [];
@@ -102,11 +103,11 @@ export default function getValidationErrors(variations, {
   const origError = console.error;
 
   const Components = getComponents(projectConfig, projectRoot);
-  Components.NO_COMPONENT = { toString() { return 'this is a temporary hack for providers with no component.' } };
+  Components.NO_COMPONENT = NO_COMPONENT;
 
   const componentValues = values(componentMap)
     .map(({ Module }) => getDefaultOrModule(Module))
-    .concat(Components.NO_COMPONENT);
+    .concat(NO_COMPONENT);
   const actualComponents = new Set(componentValues);
 
   return values(variations).map(({ actualPath, Module }) => {
