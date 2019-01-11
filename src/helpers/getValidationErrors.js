@@ -5,7 +5,6 @@ import { validate } from 'jsonschema';
 import schema from '../schema.json';
 import getProjectExtras from './getProjectExtras';
 import getDefaultOrModule from './getDefaultOrModule';
-import getComponents from './getComponents';
 import NO_COMPONENT from '../NO_COMPONENT';
 
 function getProxy(mock) {
@@ -49,7 +48,6 @@ function formatMsg(file, msg) {
 }
 
 function validateDescriptorProvider(file, provider, {
-  Components,
   actualComponents,
   projectConfig,
   projectRoot,
@@ -58,8 +56,8 @@ function validateDescriptorProvider(file, provider, {
     throw new TypeError('provider must be a function');
   }
 
-  if (provider.length !== 1 && provider.length !== 2) {
-    throw new RangeError(`provider function must take exactly 1 or 2 arguments: takes ${provider.length}`);
+  if (provider.length !== 0 && provider.length !== 1) {
+    throw new RangeError(`provider function must take exactly 0 or 1 arguments: takes ${provider.length}`);
   }
 
   const projectExtras = getProjectExtras({
@@ -68,7 +66,7 @@ function validateDescriptorProvider(file, provider, {
   });
   const Extras = getProxy(extra => new ExtrasMock(extra, { projectExtras }));
 
-  const descriptor = provider(Components, Extras);
+  const descriptor = provider(Extras);
 
   const components = Array.isArray(descriptor.component)
     ? descriptor.component
@@ -102,9 +100,6 @@ export default function getValidationErrors(variations, {
 }) {
   const origError = console.error;
 
-  const Components = getComponents(projectConfig, projectRoot);
-  Components.NO_COMPONENT = NO_COMPONENT;
-
   const componentValues = values(componentMap)
     .map(({ Module }) => getDefaultOrModule(Module))
     .concat(NO_COMPONENT);
@@ -114,7 +109,6 @@ export default function getValidationErrors(variations, {
     console.error = function throwError(msg) { throw new Error(`${actualPath}: “${msg}”`); };
     try {
       validateDescriptorProvider(actualPath, getDefaultOrModule(Module), {
-        Components,
         actualComponents,
         projectConfig,
         projectRoot,

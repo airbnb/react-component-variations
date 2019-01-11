@@ -6,7 +6,7 @@ export default function getDescriptorFromProvider(provider, {
   getExtras = undefined,
   projectMetadata = undefined,
 }) {
-  const descriptor = provider(Components, getProjectExtras({
+  const descriptor = provider(getProjectExtras({
     projectConfig,
     projectRoot,
     getExtras,

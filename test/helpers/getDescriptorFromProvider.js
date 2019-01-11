@@ -43,9 +43,8 @@ describe('getDescriptorFromProvider', () => {
 
     expect(provider).toHaveBeenCalledTimes(1);
     const { calls: [args] } = provider.mock;
-    const [actualComponents, actualExtras] = args;
+    const [actualExtras] = args;
 
-    expect(actualComponents).toBe(Components);
     expect(actualExtras).toMatchObject({
       a: true,
     });
@@ -58,7 +57,7 @@ describe('getDescriptorFromProvider', () => {
     getDescriptorFromProvider(provider, { Components, projectConfig });
     expect(provider).toHaveBeenCalledTimes(1);
     const { calls: [args] } = provider.mock;
-    const [actualComponents, actualExtras] = args;
+    const [actualExtras] = args;
 
     expect(actualExtras).toMatchObject({});
   });
