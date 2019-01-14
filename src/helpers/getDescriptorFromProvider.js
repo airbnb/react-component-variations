@@ -1,13 +1,12 @@
 import getProjectExtras from './getProjectExtras';
 
 export default function getDescriptorFromProvider(provider, {
-  Components,
   projectConfig,
   projectRoot,
   getExtras = undefined,
   projectMetadata = undefined,
 }) {
-  const descriptor = provider(Components, getProjectExtras({
+  const descriptor = provider(getProjectExtras({
     projectConfig,
     projectRoot,
     getExtras,
