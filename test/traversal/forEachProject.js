@@ -7,10 +7,10 @@ describe('forEachProject', () => {
 
   it('throws when it receives a non-empty `projects` array', () => {
     [undefined, null, '', 'foo', {}, () => {}, true, 42, false].forEach((nonArray) => {
-      expect(() => forEachProject({}, nonArray, (x) => {})).toThrow(TypeError);
+      expect(() => forEachProject({}, nonArray, x => ({ x }))).toThrow(TypeError);
     });
 
-    expect(() => forEachProject({}, [], (x) => {})).toThrow(TypeError);
+    expect(() => forEachProject({}, [], x => ({ x }))).toThrow(TypeError);
   });
 
   const mockProjectConfig = {
@@ -19,10 +19,10 @@ describe('forEachProject', () => {
   };
 
   it('validates the project config', () => {
-    expect(() => forEachProject({ a: {}, b: mockProjectConfig }, ['a', 'b'], (x) => {})).toThrow(SyntaxError);
-    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['a', 'b'], (x) => {})).toThrow(SyntaxError);
-    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['b'], (x) => {})).toThrow(SyntaxError);
-    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['a'], (x) => {})).not.toThrow();
+    expect(() => forEachProject({ a: {}, b: mockProjectConfig }, ['a', 'b'], x => ({ x }))).toThrow(SyntaxError);
+    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['a', 'b'], x => ({ x }))).toThrow(SyntaxError);
+    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['b'], x => ({ x }))).toThrow(SyntaxError);
+    expect(() => forEachProject({ a: mockProjectConfig, b: {} }, ['a'], x => ({ x }))).not.toThrow();
   });
 
   it('throws if the callback is not a function with a length of 1 or 2', () => {
@@ -31,11 +31,11 @@ describe('forEachProject', () => {
     });
 
     expect(() => forEachProject({ a: mockProjectConfig }, ['a'], () => {})).toThrow(TypeError);
-    expect(() => forEachProject({ a: mockProjectConfig }, ['a'], (a, b, c) => {})).toThrow(TypeError);
+    expect(() => forEachProject({ a: mockProjectConfig }, ['a'], (a, b, c) => ({ a, b, c }))).toThrow(TypeError);
   });
 
   it('calls the callback with the expected arguments', () => {
-    const callback = jest.fn((x) => {});
+    const callback = jest.fn(x => ({ x }));
 
     const bProjectConfig = { ...mockProjectConfig, require: ['test'] };
 
@@ -47,7 +47,7 @@ describe('forEachProject', () => {
 
     expect(callback).toHaveBeenCalledTimes(2);
     const { calls: [aArgs, bArgs] } = callback.mock;
-    
+
     expect(aArgs).toEqual([
       'a',
       mockProjectConfig,

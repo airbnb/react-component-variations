@@ -1,7 +1,8 @@
 import interopRequireDefault from '../../src/helpers/interopRequireDefault';
 import forEachDescriptor from '../../src/traversal/forEachDescriptor';
 
-let mockComponents, mockVariations;
+let mockComponents;
+let mockVariations;
 
 jest.mock('../../src/helpers/getComponents', () => jest.fn(() => mockComponents));
 jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => mockVariations));
@@ -40,7 +41,9 @@ describe('forEachDescriptor', () => {
     });
 
     expect(() => forEachDescriptor(mockProjectConfig, { getDescriptor() {} })).toThrow(TypeError);
-    expect(() => forEachDescriptor(mockProjectConfig, { getDescriptor(a, b, c) {} })).toThrow(TypeError);
+    expect(() => forEachDescriptor(mockProjectConfig, {
+      getDescriptor(a, b, c) { return (a, b, c); },
+    })).toThrow(TypeError);
   });
 
   it('returns a function', () => {
@@ -70,10 +73,12 @@ describe('forEachDescriptor', () => {
   describe('traversal function', () => {
     const projectRoot = 'some root';
     const descriptor = {};
-    let getExtras, getDescriptor;
+    let getExtras;
+    let getDescriptor;
     beforeEach(() => {
       getExtras = jest.fn();
-      getDescriptor = jest.fn((x) => descriptor);
+      // eslint-disable-next-line no-unused-vars
+      getDescriptor = jest.fn(x => descriptor);
     });
 
     it('throws when `callback` is not a 1-arg function', () => {
@@ -88,9 +93,9 @@ describe('forEachDescriptor', () => {
       });
 
       expect(() => traverse(() => {})).toThrow(TypeError);
-      expect(() => traverse((a) => {})).not.toThrow(TypeError);
-      expect(() => traverse((a, b) => {})).not.toThrow(TypeError);
-      expect(() => traverse((a, b, c) => {})).toThrow(TypeError);
+      expect(() => traverse(a => ({ a }))).not.toThrow(TypeError);
+      expect(() => traverse((a, b) => ({ a, b }))).not.toThrow(TypeError);
+      expect(() => traverse((a, b, c) => ({ a, b, c }))).toThrow(TypeError);
     });
 
     it('throws with no components', () => {
@@ -146,7 +151,7 @@ describe('forEachDescriptor', () => {
       const Components = require('../../src/helpers/getComponents')();
       const variations = require('../../src/helpers/getVariationProviders')();
 
-      const callback = jest.fn((x) => {});
+      const callback = jest.fn(x => ({ x }));
       traverse(callback);
 
       expect(getDescriptor).toHaveBeenCalledTimes(2);
@@ -176,7 +181,7 @@ describe('forEachDescriptor', () => {
         variationProvider: {
           hierarchy: 'path/to/a',
           path: variationPathA,
-          resolvedPath: mockVariations[variationPathA].actualPath
+          resolvedPath: mockVariations[variationPathA].actualPath,
         },
         variationPath: variationPathA,
       }]);
@@ -184,7 +189,7 @@ describe('forEachDescriptor', () => {
         variationProvider: {
           hierarchy: 'path/to/b',
           path: variationPathB,
-          resolvedPath: mockVariations[variationPathB].actualPath
+          resolvedPath: mockVariations[variationPathB].actualPath,
         },
         variationPath: variationPathB,
       }]);
@@ -202,7 +207,7 @@ describe('forEachDescriptor', () => {
         projectRoot,
       });
 
-      const callback = jest.fn((x) => {});
+      const callback = jest.fn(x => ({ x }));
       expect(() => traverse(callback)).toThrow(TypeError);
     });
 
@@ -219,7 +224,7 @@ describe('forEachDescriptor', () => {
         projectRoot,
       });
 
-      const callback = jest.fn((x) => {});
+      const callback = jest.fn(x => ({ x }));
       traverse(callback);
 
       expect(getDescriptor).toHaveBeenCalledTimes(1);

@@ -37,7 +37,7 @@ describe('forEachVariation', () => {
     });
 
     expect(() => forEachVariation(mockDescriptor, consumer, () => {})).toThrow(TypeError);
-    expect(() => forEachVariation(mockDescriptor, consumer, (a, b) => {})).toThrow(TypeError);
+    expect(() => forEachVariation(mockDescriptor, consumer, (a, b) => ({ a, b }))).toThrow(TypeError);
   });
 
   describe('callback function', () => {

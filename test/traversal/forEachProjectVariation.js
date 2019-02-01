@@ -36,15 +36,13 @@ jest.mock('../../src/helpers/getVariationProviders', () => jest.fn(() => ({
 const mockProjectNames = [mockProjectName, mockProjectName2];
 
 jest.mock('../../src/traversal/forEachVariation');
-jest.mock('../../src/helpers/getProjectRootConfig', () => (projectRoot, configPath) => {
-  return {
-    projects: {
-      [mockProjectName]: { ...mockProjectConfig },
-      [mockProjectName2]: { ...mockProjectConfig },
-    },
-    projectNames: mockProjectNames,
-  };
-});
+jest.mock('../../src/helpers/getProjectRootConfig', () => () => ({
+  projects: {
+    [mockProjectName]: { ...mockProjectConfig },
+    [mockProjectName2]: { ...mockProjectConfig },
+  },
+  projectNames: mockProjectNames,
+}));
 
 describe('forEachProjectVariation', () => {
   it('is a function', () => {
@@ -64,15 +62,14 @@ describe('forEachProjectVariation', () => {
       });
 
       expect(() => traverse(() => {})).toThrow(TypeError);
-      expect(() => traverse((a, b) => {})).toThrow(TypeError);
+      expect(() => traverse((a, b) => ({ a, b }))).toThrow(TypeError);
     });
   });
 
   it('invokes `forEachVariation` with the expected arguments', () => {
     const traverse = forEachProjectVariation(consumer);
-    const callback = (x) => {};
+    const callback = x => ({ x });
     const forEachVariation = require('../../src/traversal/forEachVariation');
-    const rootConfig = require('../../src/helpers/getProjectRootConfig')();
 
     traverse(callback);
 

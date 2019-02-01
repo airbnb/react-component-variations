@@ -5,4 +5,13 @@
     "max-len": 0,
     "no-console": 0,
   },
+  "overrides": [{
+    "files": ["test/**/*.js"],
+    "env": {
+      "jest": true,
+    },
+    "rules": {
+      "global-require": "off",
+    },
+  }],
 }

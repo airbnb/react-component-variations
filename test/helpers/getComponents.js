@@ -3,11 +3,11 @@ import getComponents from '../../src/helpers/getComponents';
 
 jest.mock('../../src/helpers/validateProject', () => jest.fn());
 jest.mock('../../src/helpers/globToFiles', () => jest.fn(() => ['a', 'b', 'n']));
-jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce((obj, path) => ({
+jest.mock('../../src/helpers/requireFiles', () => jest.fn(paths => paths.reduce((obj, filePath) => ({
   ...obj,
-  [path]: {
-    actualPath: path,
-    Module: path >= 'foo' ? { default() {} } : { named() {} },
+  [filePath]: {
+    actualPath: filePath,
+    Module: filePath >= 'foo' ? { default() {} } : { named() {} },
   },
 }), {})));
 

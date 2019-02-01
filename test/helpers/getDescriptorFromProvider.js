@@ -69,7 +69,12 @@ describe('getDescriptorFromProvider', () => {
     const projectRoot = { root: '' };
     const getProjectExtras = require('../../src/helpers/getProjectExtras');
 
-    getDescriptorFromProvider(provider, { Components, projectConfig, projectRoot, getExtras });
+    getDescriptorFromProvider(provider, {
+      Components,
+      projectConfig,
+      projectRoot,
+      getExtras,
+    });
 
     expect(getProjectExtras).toHaveBeenCalledTimes(1);
     expect(getProjectExtras).toHaveBeenCalledWith(expect.objectContaining({
@@ -83,7 +88,6 @@ describe('getDescriptorFromProvider', () => {
     const descriptor = { a: 1 };
     const provider = () => descriptor;
     const Components = { components: '' };
-    const getExtras = () => {};
     const projectRoot = { root: '' };
 
     const result = getDescriptorFromProvider(provider, {
@@ -105,7 +109,6 @@ describe('getDescriptorFromProvider', () => {
     const descriptor = { a: 1, metadata: { b: 3, c: 4 } };
     const provider = () => descriptor;
     const Components = { components: '' };
-    const getExtras = () => {};
     const projectRoot = { root: '' };
 
     const result = getDescriptorFromProvider(provider, {
