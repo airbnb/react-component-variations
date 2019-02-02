@@ -1,14 +1,12 @@
 import chalk from 'chalk';
-import has from 'has';
 
 import getComponents from '../helpers/getComponents';
 import getVariationProviders from '../helpers/getVariationProviders';
 import getValidationErrors from '../helpers/getValidationErrors';
 import requireFiles from '../helpers/requireFiles';
 import forEachProject from '../traversal/forEachProject';
-import validateProjects from '../helpers/validateProjects';
-import validateProject from '../helpers/validateProject';
 import normalizeConfig from '../helpers/normalizeConfig';
+import validateCommand from '../helpers/validateCommand';
 
 function getOverallErrors({
   variations = {},
@@ -55,27 +53,7 @@ function getOverallErrors({
 
 export const command = 'validate [variations]';
 export const desc = 'validate Variation Providers';
-export const builder = (yargs) => {
-  const config = normalizeConfig(yargs.argv);
-  const { project, projects, all } = config;
-  const allProjectNames = projects ? Object.keys(projects) : [];
-
-  if (all && allProjectNames.length <= 0) {
-    throw chalk.red('`--all` requires a non-empty “projects” config');
-  }
-  if (all && project) {
-    throw chalk.red('`--all` and `--project` are mutually exclusive');
-  }
-  if (project && !has(projects, project)) {
-    throw chalk.red(`Project "${project}" missing from “projects” config`);
-  }
-
-  if (projects) {
-    validateProjects(projects, allProjectNames, 'in the “projects” config');
-  } else {
-    validateProject(config);
-  }
-};
+export const builder = validateCommand;
 
 export const handler = (config) => {
   const projectRoot = process.cwd();
