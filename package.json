@@ -8,8 +8,7 @@
   },
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "babel src -d .",
-    "postbuild": "cp src/*.json ./",
+    "build": "babel src -d . --copy-files",
     "build:watch": "npm run build -- --watch",
     "clean": "rimraf *.js {commands,helpers,traversal} schema.json",
     "lint": "eslint --ext=js,jsx --ignore-path=.gitignore .",
