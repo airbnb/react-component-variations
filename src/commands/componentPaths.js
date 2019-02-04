@@ -10,12 +10,11 @@ import requireFiles from '../helpers/requireFiles';
 import getComponentPaths from '../helpers/getComponentPaths';
 import normalizeConfig from '../helpers/normalizeConfig';
 import stripMatchingPrefix from '../helpers/stripMatchingPrefix';
-import validateCommand from '../helpers/validateCommand';
 
 export const command = 'componentPaths';
 export const desc = 'print out component paths for the given project';
 
-export const builder = validateCommand();
+export { default as builder } from '../helpers/validateCommand';
 
 export const handler = (config) => {
   const projectRoot = process.cwd();

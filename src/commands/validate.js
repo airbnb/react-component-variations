@@ -6,7 +6,7 @@ import getValidationErrors from '../helpers/getValidationErrors';
 import requireFiles from '../helpers/requireFiles';
 import forEachProject from '../traversal/forEachProject';
 import normalizeConfig from '../helpers/normalizeConfig';
-import validateCommand from '../helpers/validateCommand';
+
 
 function getOverallErrors({
   variations = {},
@@ -53,7 +53,7 @@ function getOverallErrors({
 
 export const command = 'validate [variations]';
 export const desc = 'validate Variation Providers';
-export const builder = validateCommand;
+export { default as builder } from '../helpers/validateCommand';
 
 export const handler = (config) => {
   const projectRoot = process.cwd();
