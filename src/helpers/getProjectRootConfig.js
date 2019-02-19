@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import yargs from 'yargs';
+import getModuleFromPath from './getModuleFromPath';
 
 import normalizeConfig from './normalizeConfig';
-import requireFile from './requireFile';
 import interopRequireDefault from './interopRequireDefault';
 
 export default function getProjectRootConfig(projectRoot = process.cwd(), configPath = undefined) {
@@ -17,7 +17,7 @@ export default function getProjectRootConfig(projectRoot = process.cwd(), config
   } = config;
 
   if (requireInteropWrapperPath) {
-    const { Module: { default: requireInteropWrapper } } = requireFile(requireInteropWrapperPath, {
+    const requireInteropWrapper = getModuleFromPath(requireInteropWrapperPath, {
       extensions,
       projectRoot,
       requireInteropWrapper: interopRequireDefault,

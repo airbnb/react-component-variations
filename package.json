@@ -66,6 +66,9 @@
       "jsx",
       "json"
     ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/test/fixtures"
+    ],
     "testEnvironment": "node",
     "testRegex": "test/.*\\.jsx?$"
   }
