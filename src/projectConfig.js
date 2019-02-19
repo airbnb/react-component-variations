@@ -23,6 +23,7 @@ export default {
         flattenComponentTree: { type: 'boolean' },
         extras: { $ref: '#/definitions/extras' },
         metadata: { $ref: '#/definitions/metadata' },
+        sync: { $ref: '#/definitions/sync' },
         renderWrapper: {
           oneOf: [{
             type: 'string',
@@ -43,6 +44,12 @@ export default {
         items: { $ref: '#/definitions/relativeGlobPath' },
         uniqueItems: true,
       }],
+    },
+    sync: {
+      type: 'object',
+      properties: {
+        hooks: { $ref: '#/definitions/require' },
+      },
     },
     rootDir: {
       type: 'string',

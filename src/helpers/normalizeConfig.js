@@ -18,24 +18,42 @@ function normalizeProjectConfig(config, {
   return c;
 }
 
+function normalizeConfigArrays(rootConfig, projectConfig, propertyName) {
+  const set = new Set([].concat(projectConfig[propertyName] || [], rootConfig[propertyName] || []));
+  return [...set];
+}
+
 function normalizeRequireableBags(rootConfig, projectConfig, propertyNames) {
-  return propertyNames.reduce((conf, name) => ({
-    ...conf,
-    [name]: {
-      ...rootConfig[name],
-      ...projectConfig[name],
-    },
-  }), projectConfig);
+  return propertyNames.reduce((conf, name) => {
+    if (Array.isArray(rootConfig[name])) {
+      return {
+        ...conf,
+        [name]: normalizeConfigArrays(rootConfig, projectConfig, name),
+      };
+    }
+
+    return {
+      ...conf,
+      [name]: {
+        ...rootConfig[name],
+        ...projectConfig[name],
+      },
+    };
+  }, projectConfig);
 }
 
 function normalizeProjects(rootConfig, projects, extraData) {
-  return fromEntries(entries(projects).map(([name, projectConfig]) => [
-    name,
-    normalizeRequireableBags(rootConfig, normalizeProjectConfig(projectConfig, extraData), [
+  return fromEntries(entries(projects).map(([name, projectConfig]) => {
+    const obj = normalizeRequireableBags(rootConfig, normalizeProjectConfig(projectConfig, extraData), [
       'extras',
       'metadata',
-    ]),
-  ]));
+    ]);
+    const value = {
+      ...obj,
+      sync: normalizeRequireableBags(rootConfig.sync || {}, projectConfig.sync || {}, ['hooks']),
+    };
+    return [name, value];
+  }));
 }
 
 export default function normalizeConfig({
@@ -70,6 +88,7 @@ export default function normalizeConfig({
     const packagePath = findUp.sync('package.json', { normalize: false });
     const { name: packageName } = JSON.parse(fs.readFileSync(packagePath));
     const project = packageName || 'root';
+
     return {
       ...rest,
       projects: normalizeProjects(config, {
