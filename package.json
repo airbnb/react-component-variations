@@ -12,6 +12,8 @@
     "build:watch": "npm run build -- --watch",
     "clean": "rimraf *.js {commands,helpers,traversal} schema.json",
     "lint": "eslint --ext=js,jsx --ignore-path=.gitignore .",
+    "version": "auto-changelog && git add CHANGELOG.md",
+    "postversion": "auto-changelog && git add CHANGELOG.md && git commit  --no-edit --amend && git tag -f \"v$(node -e \"console.log(require('./package.json').version)\")\"",
     "prepublish": "npm run build",
     "pretest": "npm run lint",
     "tests-only": "jest --coverage",
@@ -19,6 +21,12 @@
   },
   "author": "Jordan Harband <ljharb@gmail.com>",
   "license": "MIT",
+  "auto-changelog": {
+    "output": "CHANGELOG.md",
+    "unreleased": false,
+    "commitLimit": false,
+    "backfillLimit": false
+  },
   "dependencies": {
     "airbnb-prop-types": "^2.11.0",
     "array.prototype.find": "^2.0.4",
@@ -37,6 +45,7 @@
     "yargs": "^10.1.2"
   },
   "devDependencies": {
+    "auto-changelog": "^1.11.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^23.6.0",
     "babel-plugin-add-module-exports": "^0.2.1",
