@@ -28,7 +28,7 @@
     "backfillLimit": false
   },
   "dependencies": {
-    "airbnb-prop-types": "^2.11.0",
+    "airbnb-prop-types": "^2.12.0",
     "array.prototype.find": "^2.0.4",
     "array.prototype.flatmap": "^1.2.1",
     "chalk": "^2.4.2",
@@ -41,7 +41,7 @@
     "object.fromentries": "^2.0.0",
     "object.values": "^1.1.0",
     "promise.try": "^1.0.0",
-    "resolve": "^1.9.0",
+    "resolve": "^1.10.0",
     "yargs": "^10.1.2"
   },
   "devDependencies": {
