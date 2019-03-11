@@ -23,35 +23,35 @@ function normalizeConfigArrays(rootConfig, projectConfig, propertyName) {
   return [...set];
 }
 
-function normalizeRequireableBags(rootConfig, projectConfig, propertyNames) {
-  return propertyNames.reduce((conf, name) => {
-    if (Array.isArray(rootConfig[name])) {
-      return {
-        ...conf,
-        [name]: normalizeConfigArrays(rootConfig, projectConfig, name),
-      };
-    }
+function normalizeRequireableArrays(propertyNames, rootConfig = {}, projectConfig = {}) {
+  return propertyNames.reduce((conf, name) => ({
+    ...conf,
+    [name]: normalizeConfigArrays(rootConfig, projectConfig, name),
+  }), projectConfig);
+}
 
-    return {
-      ...conf,
-      [name]: {
-        ...rootConfig[name],
-        ...projectConfig[name],
-      },
-    };
-  }, projectConfig);
+function normalizeRequireableBags(propertyNames, rootConfig = {}, projectConfig = {}) {
+  return propertyNames.reduce((conf, name) => ({
+    ...conf,
+    [name]: {
+      ...rootConfig[name],
+      ...projectConfig[name],
+    },
+  }), projectConfig);
 }
 
 function normalizeProjects(rootConfig, projects, extraData) {
   return fromEntries(entries(projects).map(([name, projectConfig]) => {
-    const obj = normalizeRequireableBags(rootConfig, normalizeProjectConfig(projectConfig, extraData), [
+    const obj = normalizeRequireableBags([
       'extras',
       'metadata',
-    ]);
-    const value = {
-      ...obj,
-      sync: normalizeRequireableBags(rootConfig.sync || {}, projectConfig.sync || {}, ['hooks']),
-    };
+    ], rootConfig, normalizeProjectConfig(projectConfig, extraData));
+
+    const sync = normalizeRequireableArrays([
+      'hooks',
+    ], rootConfig.sync, projectConfig.sync);
+
+    const value = { ...obj, sync };
     return [name, value];
   }));
 }

@@ -51,7 +51,6 @@ export default {
         hooks: { $ref: '#/definitions/require' },
         additionalProperties: false,
       },
-      required: false,
     },
     rootDir: {
       type: 'string',
