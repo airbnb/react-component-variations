@@ -1,4 +1,5 @@
 import validateProjects from '../../src/helpers/validateProjects';
+import testProjectConfig from '../fixtures/projectConfig.json';
 
 describe('validateProjects', () => {
   it('throws when projectNames is not a non-empty array', () => {
@@ -20,5 +21,9 @@ describe('validateProjects', () => {
     expect(error).toMatchObject({
       message: expect.stringContaining(extraMsg),
     });
+  });
+
+  it('should pass on a valid projectConfig', () => {
+    expect(() => validateProjects(testProjectConfig, ['foo'])).not.toThrowError();
   });
 });

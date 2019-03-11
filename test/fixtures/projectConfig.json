@@ -1,0 +1,8 @@
+{
+  "foo": {
+    "componentsRoot": "./app/assets/javascripts/foo/team/",
+    "components": "./**/*.{jsx,tsx}",
+    "variationsRoot": "./app/assets/javascripts/foo/examples/",
+    "variations": "./**/*VariationProvider.{jsx,tsx}"
+  }
+}

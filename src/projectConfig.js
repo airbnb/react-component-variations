@@ -49,7 +49,9 @@ export default {
       type: 'object',
       properties: {
         hooks: { $ref: '#/definitions/require' },
+        additionalProperties: false,
       },
+      required: false,
     },
     rootDir: {
       type: 'string',
