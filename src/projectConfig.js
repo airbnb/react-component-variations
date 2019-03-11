@@ -48,10 +48,13 @@ export default {
     sync: {
       type: 'object',
       properties: {
-        hooks: { $ref: '#/definitions/require' },
-        additionalProperties: false,
+        hooks: {
+          type: ['array', 'undefined'],
+          items: { $ref: '#/definitions/requiredFile' },
+          uniqueItems: true,
+        },
       },
-      required: false,
+      required: [],
     },
     rootDir: {
       type: 'string',
