@@ -2,6 +2,7 @@ import fs from 'fs';
 import findUp from 'find-up';
 import fromEntries from 'object.fromentries';
 import entries from 'object.entries';
+import flat from 'array.prototype.flat';
 
 import requireProperties from './requireProperties';
 
@@ -80,7 +81,7 @@ export default function normalizeConfig({
     return {
       ...normalizeProjectConfig(rest, extraData),
       projects: normalizeProjects(config, config.projects, extraData),
-      projectNames: [project],
+      projectNames: flat([project], 1),
     };
   }
   if (!config.projects) {
