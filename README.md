@@ -32,7 +32,7 @@ export default function ButtonVariationProvider({ action }) {
     variations: [
       {
         title: 'Default',
-        render: () => <Button onClick={() => action('onClick')}>click me!</Button>,
+        render: () => <Button onClick={action('onClick')}>click me!</Button>,
       },
       {
         title: 'Disabled',
