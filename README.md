@@ -23,7 +23,7 @@ Variations are defined in files we call variation providers. These are standard 
 import React from 'react';
 import Button from '../components/Button';
 
-export default function ButtonVariationProvider({ action }) {
+export default function ButtonVariationProvider() {
   return {
     component: Button,
 
@@ -32,7 +32,7 @@ export default function ButtonVariationProvider({ action }) {
     variations: [
       {
         title: 'Default',
-        render: () => <Button onClick={action('onClick')}>click me!</Button>,
+        render: () => <Button onClick={() => console.log('Clicked!')}>click me!</Button>,
       },
       {
         title: 'Disabled',
@@ -42,8 +42,6 @@ export default function ButtonVariationProvider({ action }) {
   };
 }
 ```
-
-Each variation provider will be passed an extras object. It's properties come from the project's configuration, and can be used to get mock data needed to render the variations.
 
 ## Consumers
 
