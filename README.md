@@ -15,7 +15,7 @@ React component variations are:
 
 ## Variations
 
-A variation looks like:
+Variations are defined in files we call variation providers. These are standard Javascript modules that return an object with specific fields. For example:
 
 ```jsx
 // ButtonVariationProvider.jsx
@@ -42,6 +42,8 @@ export default function ButtonVariationProvider({ action }) {
   };
 }
 ```
+
+Each variation provider will be passed an extras object. It's properties come from the project's configuration, and can be used to get mock data needed to render the variations.
 
 ## Consumers
 
