@@ -16,9 +16,10 @@ export const desc = 'print out component paths for the given project';
 
 export { default as builder } from '../helpers/validateCommand';
 
-export const handler = (config) => {
+// This config parameter here is the arguments passed in through yargs.
+export const handler = async (config) => {
   const projectRoot = process.cwd();
-  const { projectNames } = normalizeConfig(config);
+  const { projectNames } = await normalizeConfig(config);
   const {
     projects,
     require: requires,

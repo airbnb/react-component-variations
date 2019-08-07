@@ -24,6 +24,11 @@ export default {
         extras: { $ref: '#/definitions/extras' },
         metadata: { $ref: '#/definitions/metadata' },
         sync: { $ref: '#/definitions/sync' },
+        // Project Name
+        name: {
+          type: 'string',
+          minLength: 1,
+        },
         renderWrapper: {
           oneOf: [{
             type: 'string',

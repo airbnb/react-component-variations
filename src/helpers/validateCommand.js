@@ -5,8 +5,8 @@ import normalizeConfig from './normalizeConfig';
 import validateProjects from './validateProjects';
 import validateProject from './validateProject';
 
-export default function validateCommand(yargs) {
-  const config = normalizeConfig(yargs.argv);
+export default async function validateCommand(yargs) {
+  const config = await normalizeConfig(yargs.argv);
   const { project, projects, all } = config;
   const allProjectNames = projects ? Object.keys(projects) : [];
 

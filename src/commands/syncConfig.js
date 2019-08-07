@@ -9,8 +9,8 @@ export { default as builder } from '../helpers/validateCommand';
 export const desc = 'Sync variation consumers.';
 export const command = 'sync';
 
-export const handler = (config) => {
-  const { sync, projectNames, projects } = normalizeConfig(config);
+export const handler = async (config) => {
+  const { sync, projectNames, projects } = await normalizeConfig(config);
 
   forEachProject(projects, projectNames, (projectName, projectConfig) => {
     const {

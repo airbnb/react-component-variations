@@ -55,9 +55,9 @@ export const command = 'validate [variations]';
 export const desc = 'validate Variation Providers';
 export { default as builder } from '../helpers/validateCommand';
 
-export const handler = (config) => {
+export const handler = async (config) => {
   const projectRoot = process.cwd();
-  const { projects, projectNames } = normalizeConfig(config, { projectRoot });
+  const { projects, projectNames } = await normalizeConfig(config, { projectRoot });
 
   const exitCodes = [];
 

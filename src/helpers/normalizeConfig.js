@@ -3,7 +3,7 @@ import findUp from 'find-up';
 import fromEntries from 'object.fromentries';
 import entries from 'object.entries';
 import flat from 'array.prototype.flat';
-
+import getProjectConfig from './getProjectConfig';
 import requireProperties from './requireProperties';
 
 function normalizeProjectConfig(config, {
@@ -57,7 +57,7 @@ function normalizeProjects(rootConfig, projects, extraData) {
   }));
 }
 
-export default function normalizeConfig({
+export default async function normalizeConfig({
   all,
   /* these are provided by yargs */
   version,
@@ -68,6 +68,13 @@ export default function normalizeConfig({
   /* ^ these were provided by yargs */
   ...config
 }, extraData = {}) {
+  if (config.projectConfigFilePath) {
+    // We are reassigning the param here to handle
+    // normalization across multiple configuration files.
+    // eslint-disable-next-line no-param-reassign
+    config = await getProjectConfig(config.projectConfigFilePath);
+  }
+
   if (all) {
     const { project, ...rest } = config;
     return {
