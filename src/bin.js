@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-
-import globToFiles from './helpers/globToFiles';
 import requireFiles from './helpers/requireFiles';
+import globToFiles from './helpers/globToFiles';
+import { existsSync, writeFileSync, readFileSync } from 'fs';
+import path from 'path';
+import os from 'os';
 
 require('yargs')
   .commandDir('./commands')
@@ -38,7 +40,16 @@ require('yargs')
     describe: 'glob path to Variation Providers',
     coerce: globToFiles,
   })
-  .config()
-  .pkgConf('react-component-variations')
-  .help()
+  .config('config', (configPath) => {
+    if(existsSync(configPath)) {
+      const config = require(configPath);
+      const tmpFile = path.join(os.tmpdir(),  path.parse(configPath).base);
+      writeFileSync(tmpFile, JSON.stringify(config));
+      return JSON.parse(readFileSync(tmpFile));
+    } else {
+      return yargs.pkgConf()['react-component-variations'];
+    }
+  })
+  .describe('config', 'Config file path')
+  .default('config', '.react-component-variations.js')
   .parse();
