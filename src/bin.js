@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+import { existsSync } from 'fs';
+import yargs from 'yargs';
 import globToFiles from './helpers/globToFiles';
 import requireFiles from './helpers/requireFiles';
 
-require('yargs')
+yargs
   .commandDir('./commands')
   .demandCommand(1, 'a subcommand is required')
   .option('project', {
@@ -38,7 +40,15 @@ require('yargs')
     describe: 'glob path to Variation Providers',
     coerce: globToFiles,
   })
-  .config()
-  .pkgConf('react-component-variations')
-  .help()
+  .config('config', (configFilePath) => {
+    // Fallback to using the 'react-component-variations' field in package.json
+    // this will keep this package backwards compatible
+    if (!existsSync(configFilePath)) {
+      return yargs.pkgConf()['react-component-variations'];
+    }
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    return require(configFilePath);
+  })
+  .describe('config', 'Config file path')
+  .default('config', '.react-component-variations.js')
   .parse();
